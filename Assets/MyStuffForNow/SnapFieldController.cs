@@ -17,8 +17,10 @@ public class SnapFieldController : MonoBehaviour
 	private GameObject Up;
 
 	// Starting values for square
-	private float distance_Y = 1.2f;
 	private float distance_X = 1.2f;
+	private float distance_Y = 0f;
+
+	private int rotation_Z = 0;
 
 	private void CheckForDuplicationRecursive(Transform current, int currentlyFoundCount)
 	{
@@ -29,25 +31,25 @@ public class SnapFieldController : MonoBehaviour
 				break;
 			}
 
-			if (Right != null && Vector3.Distance(Right.transform.position, child.position) < 0.1f)
+			if (Right != null && Vector3.Distance(Right.transform.position, child.position) < 0.21f)
 			{
 				Right.SetActive(false);
 				currentlyFoundCount++;
 				continue;
 			}
-			else if (Down != null && Vector3.Distance(Down.transform.position, child.position) < 0.1f)
+			else if (Down != null && Vector3.Distance(Down.transform.position, child.position) < 0.21f)
 			{
 				Down.SetActive(false);
 				currentlyFoundCount++;
 				continue;
 			}
-			else if (Left != null && Vector3.Distance(Left.transform.position, child.position) < 0.1f)
+			else if (Left != null && Vector3.Distance(Left.transform.position, child.position) < 0.21f)
 			{
 				Left.SetActive(false);
 				currentlyFoundCount++;
 				continue;
 			}
-			else if (Up != null && Vector3.Distance(Up.transform.position, child.position) < 0.1f)
+			else if (Up != null && Vector3.Distance(Up.transform.position, child.position) < 0.21f)
 			{
 				Up.SetActive(false);
 				currentlyFoundCount++;
@@ -63,7 +65,8 @@ public class SnapFieldController : MonoBehaviour
 		if (Right != null)
 		{
 			Right.name = "Right";
-			Right.transform.SetPositionAndRotation(new Vector3(distance_X, 0, 0), Quaternion.identity);
+			Right.transform.SetPositionAndRotation(new Vector3(distance_X, distance_Y, 0), Quaternion.identity);
+			Right.transform.Rotate(new Vector3(0, 0, -rotation_Z));
 			Right.transform.localScale = new Vector3(1f, 1f, 1f);
 			Right.transform.SetParent(transform, false);
 		}
@@ -71,7 +74,7 @@ public class SnapFieldController : MonoBehaviour
 		if (Down != null)
 		{
 			Down.name = "Down";
-			Down.transform.SetPositionAndRotation(new Vector3(0, -distance_Y, 0), Quaternion.identity);
+			Down.transform.SetPositionAndRotation(new Vector3(0, -1.2f, 0), Quaternion.identity);
 			Down.transform.localScale = new Vector3(1f, 1f, 1f);
 			Down.transform.SetParent(transform, false);
 		}
@@ -79,7 +82,8 @@ public class SnapFieldController : MonoBehaviour
 		if (Left != null)
 		{
 			Left.name = "Left";
-			Left.transform.SetPositionAndRotation(new Vector3(-distance_X, 0, 0), Quaternion.identity);
+			Left.transform.SetPositionAndRotation(new Vector3(-distance_X, distance_Y, 0), Quaternion.identity);
+			Left.transform.Rotate(new Vector3(0, 0, rotation_Z));
 			Left.transform.localScale = new Vector3(1f, 1f, 1f);
 			Left.transform.SetParent(transform, false);
 		}
@@ -87,7 +91,7 @@ public class SnapFieldController : MonoBehaviour
 		if (Up != null)
 		{
 			Up.name = "Up";
-			Up.transform.SetPositionAndRotation(new Vector3(0, distance_Y, 0), Quaternion.identity);
+			Up.transform.SetPositionAndRotation(new Vector3(0, 1.2f, 0), Quaternion.identity);
 			Up.transform.localScale = new Vector3(1f, 1f, 1f);
 			Up.transform.SetParent(transform, false);
 		}
@@ -168,9 +172,13 @@ public class SnapFieldController : MonoBehaviour
 					break;
 			}
 		}
-		else
+		else if(oldestInteractable.name.StartsWith("Triangle"))
 		{
-			distance_X = 1.2f;
+			distance_X = 0.82f;
+			distance_Y = 0.2185f;
+			rotation_Z = 60;
+
+			int thisRotation = transform.GetComponentInParent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
 
 			switch (this.name)
 			{
@@ -178,41 +186,49 @@ public class SnapFieldController : MonoBehaviour
 					Right = Instantiate(gameObject);
 					Down = Instantiate(gameObject);
 					Left = Instantiate(gameObject);
-					Up = Instantiate(gameObject);
 
 					InstantiateAndSetObjects();
 					break;
 				case "Right":
-					Right = Instantiate(gameObject);
-					Down = Instantiate(gameObject);
-					Up = Instantiate(gameObject);
+					Right = Instantiate(gameObject); 
+					Left = Instantiate(gameObject);
+
+					transform.Rotate(new Vector3(0, 0, -thisRotation));
 
 					InstantiateAndSetObjects();
 					break;
 				case "Down":
 					Right = Instantiate(gameObject);
-					Down = Instantiate(gameObject);
 					Left = Instantiate(gameObject);
+
+					transform.Rotate(new Vector3(0, 0, thisRotation));
 
 					InstantiateAndSetObjects();
 					break;
 				case "Left":
-					Down = Instantiate(gameObject);
-					Left = Instantiate(gameObject);
-					Up = Instantiate(gameObject);
-
-					InstantiateAndSetObjects();
-					break;
-				case "Up":
 					Right = Instantiate(gameObject);
 					Left = Instantiate(gameObject);
-					Up = Instantiate(gameObject);
+
+					transform.Rotate(new Vector3(0, 0, thisRotation));
 
 					InstantiateAndSetObjects();
 					break;
 				default:
 					break;
 			}
+		}
+		else
+		{
+			distance_X = 1.2f;
+			distance_Y = 0f;
+			rotation_Z = 0;
+
+			Right = Instantiate(gameObject);
+			Down = Instantiate(gameObject);
+			Left = Instantiate(gameObject);
+			Up = Instantiate(gameObject);
+
+			InstantiateAndSetObjects();
 		}
 		CheckForDuplicationRecursive(transform.root, 0);
 	}
