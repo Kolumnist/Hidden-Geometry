@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -16,16 +14,22 @@ public class SnapFieldController : MonoBehaviour
 	private GameObject Left;
 	private GameObject Up;
 
-	// Starting values for square
-	private float distance_X = 1.2f;
-	private float distance_Y = 0f;
+	// This Gameobject
+	private int zRotation = 0;
 
-	private int rotation_Z = 0;
+	// Instantiate Objects Position and Rotation
+	private float otherDistanceX = 4f;
+	private float otherDistanceY = 4f;
+
+	private float otherAdjustmentY = 0f;
+
+	private float otherZRotation = 0f;
 
 	private void CheckForDuplicationRecursive(Transform current, int currentlyFoundCount)
 	{
 		foreach (Transform child in current)
 		{
+			Debug.Log(child.name);
 			if (currentlyFoundCount == 3 || current == this.transform)
 			{
 				break;
@@ -33,27 +37,23 @@ public class SnapFieldController : MonoBehaviour
 
 			if (Right != null && Vector3.Distance(Right.transform.position, child.position) < 0.21f)
 			{
-				Right.SetActive(false);
+				Destroy(Right);
 				currentlyFoundCount++;
-				continue;
 			}
 			else if (Down != null && Vector3.Distance(Down.transform.position, child.position) < 0.21f)
 			{
-				Down.SetActive(false);
+				Destroy(Down);
 				currentlyFoundCount++;
-				continue;
 			}
 			else if (Left != null && Vector3.Distance(Left.transform.position, child.position) < 0.21f)
 			{
-				Left.SetActive(false);
+				Destroy(Left);
 				currentlyFoundCount++;
-				continue;
 			}
 			else if (Up != null && Vector3.Distance(Up.transform.position, child.position) < 0.21f)
 			{
-				Up.SetActive(false);
+				Destroy(Up);
 				currentlyFoundCount++;
-				continue;
 			}
 
 			CheckForDuplicationRecursive(child, currentlyFoundCount);
@@ -65,8 +65,8 @@ public class SnapFieldController : MonoBehaviour
 		if (Right != null)
 		{
 			Right.name = "Right";
-			Right.transform.SetPositionAndRotation(new Vector3(distance_X, distance_Y, 0), Quaternion.identity);
-			Right.transform.Rotate(new Vector3(0, 0, -rotation_Z));
+			Right.transform.SetPositionAndRotation(new Vector3(otherDistanceX, otherAdjustmentY, 0), Quaternion.identity);
+			Right.transform.Rotate(new Vector3(0,0, -otherZRotation));
 			Right.transform.localScale = new Vector3(1f, 1f, 1f);
 			Right.transform.SetParent(transform, false);
 		}
@@ -74,7 +74,7 @@ public class SnapFieldController : MonoBehaviour
 		if (Down != null)
 		{
 			Down.name = "Down";
-			Down.transform.SetPositionAndRotation(new Vector3(0, -1.2f, 0), Quaternion.identity);
+			Down.transform.SetPositionAndRotation(new Vector3(0, -otherDistanceY, 0), Quaternion.identity);
 			Down.transform.localScale = new Vector3(1f, 1f, 1f);
 			Down.transform.SetParent(transform, false);
 		}
@@ -82,8 +82,8 @@ public class SnapFieldController : MonoBehaviour
 		if (Left != null)
 		{
 			Left.name = "Left";
-			Left.transform.SetPositionAndRotation(new Vector3(-distance_X, distance_Y, 0), Quaternion.identity);
-			Left.transform.Rotate(new Vector3(0, 0, rotation_Z));
+			Left.transform.SetPositionAndRotation(new Vector3(-otherDistanceX, otherAdjustmentY, 0), Quaternion.identity);
+			Left.transform.Rotate(new Vector3(0, 0, otherZRotation));
 			Left.transform.localScale = new Vector3(1f, 1f, 1f);
 			Left.transform.SetParent(transform, false);
 		}
@@ -91,7 +91,7 @@ public class SnapFieldController : MonoBehaviour
 		if (Up != null)
 		{
 			Up.name = "Up";
-			Up.transform.SetPositionAndRotation(new Vector3(0, 1.2f, 0), Quaternion.identity);
+			Up.transform.SetPositionAndRotation(new Vector3(0, otherDistanceY, 0), Quaternion.identity);
 			Up.transform.localScale = new Vector3(1f, 1f, 1f);
 			Up.transform.SetParent(transform, false);
 		}
@@ -108,6 +108,10 @@ public class SnapFieldController : MonoBehaviour
 			else if(this.name == "Left")
 				transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(-0.3f, 0, 0), Quaternion.identity);
 		}*/
+		if(zRotation != 0)
+		{
+			this.transform.Rotate(0,0, -zRotation);
+		}
 
 		foreach (Transform child in transform)
 		{
@@ -118,16 +122,16 @@ public class SnapFieldController : MonoBehaviour
 	public void CreateSnappers()
 	{
 		Debug.Log("Begin Creating");
-		Debug.Log(transform.name);
+		Debug.Log("Creates: " + transform.name);
 
 		// I know this is dumb but it is in my mind necessary as I need the Instantiation before I set any position.
 		// Also I need to duplicate or put this script on another object in the world the entire time, second option however is weird.
 		Transform oldestInteractable = GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform;
-		Debug.Log(oldestInteractable.name);
+		Debug.Log("Holds a " + oldestInteractable.name);
 
 		if (oldestInteractable.name.StartsWith("Quad"))
 		{
-			distance_X = 1.5f;
+			otherDistanceX = 1.5f;
 			switch (this.name)
 			{
 				case "Base":
@@ -174,55 +178,34 @@ public class SnapFieldController : MonoBehaviour
 		}
 		else if(oldestInteractable.name.StartsWith("Triangle"))
 		{
-			distance_X = 0.82f;
-			distance_Y = 0.2185f;
-			rotation_Z = 60;
+			otherDistanceX = 2.73f;
+			otherAdjustmentY = 0.73f;
+			otherZRotation = 60;
+			zRotation = transform.parent != null && transform.parent.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
 
-			int thisRotation = transform.GetComponentInParent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
-
+			Right = Instantiate(gameObject);
+			Left = Instantiate(gameObject);
 			switch (this.name)
 			{
 				case "Base":
-					Right = Instantiate(gameObject);
 					Down = Instantiate(gameObject);
-					Left = Instantiate(gameObject);
-
-					InstantiateAndSetObjects();
 					break;
 				case "Right":
-					Right = Instantiate(gameObject); 
-					Left = Instantiate(gameObject);
-
-					transform.Rotate(new Vector3(0, 0, -thisRotation));
-
-					InstantiateAndSetObjects();
+					transform.Rotate(new Vector3(0, 0, zRotation = -zRotation));
 					break;
 				case "Down":
-					Right = Instantiate(gameObject);
-					Left = Instantiate(gameObject);
-
-					transform.Rotate(new Vector3(0, 0, thisRotation));
-
-					InstantiateAndSetObjects();
+					transform.Rotate(new Vector3(0, 0, zRotation = 180));
 					break;
 				case "Left":
-					Right = Instantiate(gameObject);
-					Left = Instantiate(gameObject);
-
-					transform.Rotate(new Vector3(0, 0, thisRotation));
-
-					InstantiateAndSetObjects();
+					transform.Rotate(new Vector3(0, 0, zRotation));
 					break;
 				default:
 					break;
 			}
+			InstantiateAndSetObjects();
 		}
 		else
 		{
-			distance_X = 1.2f;
-			distance_Y = 0f;
-			rotation_Z = 0;
-
 			Right = Instantiate(gameObject);
 			Down = Instantiate(gameObject);
 			Left = Instantiate(gameObject);
@@ -230,6 +213,11 @@ public class SnapFieldController : MonoBehaviour
 
 			InstantiateAndSetObjects();
 		}
+		otherDistanceX = 4f;
+		otherDistanceY = 4f;
+		otherAdjustmentY = 0f;
+		otherZRotation = 0;
+
 		CheckForDuplicationRecursive(transform.root, 0);
 	}
 }
