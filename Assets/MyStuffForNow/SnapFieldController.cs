@@ -3,9 +3,6 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class SnapFieldController : MonoBehaviour
 {
-
-	// THIS CODE SUCKS
-
 	[SerializeField] 
 	private Transform baseTransform;
 
@@ -14,19 +11,18 @@ public class SnapFieldController : MonoBehaviour
 	private GameObject Left;
 	private GameObject Up;
 
-	// This Gameobject
 	private int zRotation = 0;
 
-	// Instantiate Objects Position and Rotation
+	// new snapperobjects position and rotation
 	private float otherDistanceX = 4f;
-	private float otherDistanceY = 4f;
-
+	private readonly float otherDistanceY = 4f;
 	private float otherAdjustmentY = 0f;
-
 	private float otherZRotation = 0f;
 
 	private void CheckForDuplicationRecursive(Transform current, int currentlyFoundCount)
 	{
+		if (current == null) return;
+
 		foreach (Transform child in current)
 		{
 			Debug.Log(child.name);
@@ -60,79 +56,28 @@ public class SnapFieldController : MonoBehaviour
 		}
 	}
 
-	private void InstantiateAndSetObjects()
+	private GameObject InstantiateSnapper(string name, Vector3 position, float zRotation)
 	{
-		if (Right != null)
-		{
-			Right.name = "Right";
-			Right.transform.SetPositionAndRotation(new Vector3(otherDistanceX, otherAdjustmentY, 0), Quaternion.identity);
-			Right.transform.Rotate(new Vector3(0,0, -otherZRotation));
-			Right.transform.localScale = new Vector3(1f, 1f, 1f);
-			Right.transform.SetParent(transform, false);
-		}
-
-		if (Down != null)
-		{
-			Down.name = "Down";
-			Down.transform.SetPositionAndRotation(new Vector3(0, -otherDistanceY, 0), Quaternion.identity);
-			Down.transform.localScale = new Vector3(1f, 1f, 1f);
-			Down.transform.SetParent(transform, false);
-		}
-
-		if (Left != null)
-		{
-			Left.name = "Left";
-			Left.transform.SetPositionAndRotation(new Vector3(-otherDistanceX, otherAdjustmentY, 0), Quaternion.identity);
-			Left.transform.Rotate(new Vector3(0, 0, otherZRotation));
-			Left.transform.localScale = new Vector3(1f, 1f, 1f);
-			Left.transform.SetParent(transform, false);
-		}
-
-		if (Up != null)
-		{
-			Up.name = "Up";
-			Up.transform.SetPositionAndRotation(new Vector3(0, otherDistanceY, 0), Quaternion.identity);
-			Up.transform.localScale = new Vector3(1f, 1f, 1f);
-			Up.transform.SetParent(transform, false);
-		}
-	}
-
-	public void DestructSnappers()
-	{
-		Debug.Log("Begin Destructing");
-		/*Transform oldestInteractable = GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform;
-		if (oldestInteractable.name.StartsWith("Quad"))
-		{
-			if(this.name == "Right")
-				transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(0.3f, 0, 0), Quaternion.identity);
-			else if(this.name == "Left")
-				transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(-0.3f, 0, 0), Quaternion.identity);
-		}*/
-		if(zRotation != 0)
-		{
-			this.transform.Rotate(0,0, -zRotation);
-		}
-
-		foreach (Transform child in transform)
-		{
-			Destroy(child.gameObject);
-		}
+		GameObject snapper = Instantiate(this.gameObject);
+		snapper.name = name;
+		snapper.transform.SetPositionAndRotation(position, Quaternion.identity);
+		snapper.transform.Rotate(new Vector3(0, 0, zRotation));
+		snapper.transform.localScale = new Vector3(1f, 1f, 1f);
+		snapper.transform.SetParent(transform, false);
+		
+		return snapper;
 	}
 
 	public void CreateSnappers()
 	{
-		Debug.Log("Begin Creating");
-		Debug.Log("Creates: " + transform.name);
-
-		// I know this is dumb but it is in my mind necessary as I need the Instantiation before I set any position.
-		// Also I need to duplicate or put this script on another object in the world the entire time, second option however is weird.
 		Transform oldestInteractable = GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform;
-		Debug.Log("Holds a " + oldestInteractable.name);
+		
+		Debug.Log("Creates: " + transform.name + " which holds a " + oldestInteractable.name);
 
 		if (oldestInteractable.name.StartsWith("Quad"))
 		{
 			otherDistanceX = 1.5f;
-			switch (this.name)
+			/*switch (this.name)
 			{
 				case "Base":
 					Right = Instantiate(gameObject);
@@ -140,7 +85,7 @@ public class SnapFieldController : MonoBehaviour
 					Left = Instantiate(gameObject);
 					//Up = Instantiate(gameObject);
 					
-					InstantiateAndSetObjects();
+					SetSnapperValues();
 					break;
 				case "Right":
 					Right = Instantiate(gameObject);
@@ -148,33 +93,33 @@ public class SnapFieldController : MonoBehaviour
 					//Up = Instantiate(gameObject);
 
 					transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(0.3f, 0, 0), Quaternion.identity);
-					InstantiateAndSetObjects();
+					SetSnapperValues();
 					break;
-				/*case "D":
+				case "D":
 					Right = Instantiate(gameObject);
 					//Down = Instantiate(gameObject);
 					Left = Instantiate(gameObject);
 
 					InstantiateAndSetObjects();
-					break;*/
+					break;
 				case "Left":
 					//Down = Instantiate(gameObject);
 					Left = Instantiate(gameObject);
 					//Up = Instantiate(gameObject);
 
 					transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(-0.3f, 0, 0), Quaternion.identity);
-					InstantiateAndSetObjects();
+					SetSnapperValues();
 					break;
-				/*case "U":
+				case "U":
 					Right = Instantiate(gameObject);
 					Left = Instantiate(gameObject);
 					Up = Instantiate(gameObject);
 
 					InstantiateAndSetObjects();
-					break;*/
+					break;
 				default:
 					break;
-			}
+			}*/
 		}
 		else if(oldestInteractable.name.StartsWith("Triangle"))
 		{
@@ -183,41 +128,59 @@ public class SnapFieldController : MonoBehaviour
 			otherZRotation = 60;
 			zRotation = transform.parent != null && transform.parent.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
 
-			Right = Instantiate(gameObject);
-			Left = Instantiate(gameObject);
+			Right = InstantiateSnapper("Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
+			Left = InstantiateSnapper("Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
+
 			switch (this.name)
 			{
-				case "Base":
-					Down = Instantiate(gameObject);
-					break;
 				case "Right":
 					transform.Rotate(new Vector3(0, 0, zRotation = -zRotation));
-					break;
-				case "Down":
-					transform.Rotate(new Vector3(0, 0, zRotation = 180));
 					break;
 				case "Left":
 					transform.Rotate(new Vector3(0, 0, zRotation));
 					break;
+				case "Down":
+					transform.Rotate(new Vector3(0, 0, zRotation = 180));
+					break;
 				default:
+					Down = InstantiateSnapper("Down", new Vector3(0, -otherDistanceY, 0), 0);
 					break;
 			}
-			InstantiateAndSetObjects();
 		}
 		else
 		{
-			Right = Instantiate(gameObject);
-			Down = Instantiate(gameObject);
-			Left = Instantiate(gameObject);
-			Up = Instantiate(gameObject);
-
-			InstantiateAndSetObjects();
+			Right = InstantiateSnapper("Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
+			Left = InstantiateSnapper("Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
+			Up = InstantiateSnapper("Up", new Vector3(0, otherDistanceY, 0), 0);
+			Down = InstantiateSnapper("Down", new Vector3(0, -otherDistanceY, 0), 0);
 		}
+
 		otherDistanceX = 4f;
-		otherDistanceY = 4f;
 		otherAdjustmentY = 0f;
 		otherZRotation = 0;
 
-		CheckForDuplicationRecursive(transform.root, 0);
+		CheckForDuplicationRecursive(baseTransform, 0);
+	}
+
+	public void DestructSnappers()
+	{
+		Debug.Log("Begin Destructing for " + this.gameObject);
+		/*Transform oldestInteractable = GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform;
+		if (oldestInteractable.name.StartsWith("Quad"))
+		{
+			if(this.name == "Right")
+				transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(0.3f, 0, 0), Quaternion.identity);
+			else if(this.name == "Left")
+				transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(-0.3f, 0, 0), Quaternion.identity);
+		}*/
+		if (zRotation != 0)
+		{
+			this.transform.Rotate(0, 0, -zRotation);
+		}
+
+		foreach (Transform child in transform)
+		{
+			Destroy(child.gameObject);
+		}
 	}
 }
