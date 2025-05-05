@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class CubeSolution : MonoBehaviour
 {
     List<string> directions = new List<string>();
+	List<Transform> emptySnappers = new List<Transform>();
 
     int countRight = 0;
     int countLeft = 0;
@@ -36,6 +39,12 @@ public class CubeSolution : MonoBehaviour
 			return;
 		}
 
+		if (current.GetComponent<XRSocketInteractor>().interactablesSelected.Count == 0)
+		{
+			emptySnappers.Add(current);
+			return;
+		}
+
 		switch (current.name)
 		{
 			case "Right":
@@ -54,6 +63,8 @@ public class CubeSolution : MonoBehaviour
 				countDown++;
 				ApplyRules(current, ref isDownFSIR, countDown);
 				break;
+			
+			// Rule 1: Start Transform is floor
 			default: directions.Add("Floor");
 				break;
 		}

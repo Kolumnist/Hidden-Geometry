@@ -3,7 +3,9 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class SnapFieldController : MonoBehaviour
 {
-	[SerializeField] 
+	[SerializeField]
+	private GameObject snapPrefab;
+
 	private Transform baseTransform;
 
 	private GameObject Right;
@@ -19,13 +21,26 @@ public class SnapFieldController : MonoBehaviour
 	private float otherAdjustmentY = 0f;
 	private float otherZRotation = 0f;
 
-	private void CheckForDuplicationRecursive(Transform current, int currentlyFoundCount)
+	private void Start()
+	{
+		baseTransform = this.transform;
+		while (!baseTransform.name.Equals("Base"))
+		{
+			baseTransform = baseTransform.parent;
+		}
+	}
+
+	// Currently one bug with the base as multiple snappers can exist in that place
+
+	private void DeleteDuplicatesRecursive(Transform current, int currentlyFoundCount)
 	{
 		if (current == null) return;
 
 		foreach (Transform child in current)
 		{
 			Debug.Log(child.name);
+			DeleteDuplicatesRecursive(child, currentlyFoundCount);
+
 			if (currentlyFoundCount == 3 || current == this.transform)
 			{
 				break;
@@ -51,21 +66,16 @@ public class SnapFieldController : MonoBehaviour
 				Destroy(Up);
 				currentlyFoundCount++;
 			}
-
-			CheckForDuplicationRecursive(child, currentlyFoundCount);
 		}
 	}
 
-	private GameObject InstantiateSnapper(string name, Vector3 position, float zRotation)
+	private void SetSnapper(ref GameObject snapper, string name, Vector3 position, float zRotation)
 	{
-		GameObject snapper = Instantiate(this.gameObject);
 		snapper.name = name;
 		snapper.transform.SetPositionAndRotation(position, Quaternion.identity);
 		snapper.transform.Rotate(new Vector3(0, 0, zRotation));
 		snapper.transform.localScale = new Vector3(1f, 1f, 1f);
 		snapper.transform.SetParent(transform, false);
-		
-		return snapper;
 	}
 
 	public void CreateSnappers()
@@ -128,8 +138,11 @@ public class SnapFieldController : MonoBehaviour
 			otherZRotation = 60;
 			zRotation = transform.parent != null && transform.parent.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
 
-			Right = InstantiateSnapper("Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
-			Left = InstantiateSnapper("Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
+			Right = Instantiate(this.gameObject);
+			Left = Instantiate(this.gameObject);
+			
+			SetSnapper(ref Right, "Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
+			SetSnapper(ref Left, "Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
 
 			switch (this.name)
 			{
@@ -143,23 +156,29 @@ public class SnapFieldController : MonoBehaviour
 					transform.Rotate(new Vector3(0, 0, zRotation = 180));
 					break;
 				default:
-					Down = InstantiateSnapper("Down", new Vector3(0, -otherDistanceY, 0), 0);
+					Down = Instantiate(this.gameObject);
+					SetSnapper(ref Down, "Down", new Vector3(0, -otherDistanceY, 0), 0);
 					break;
 			}
 		}
 		else
 		{
-			Right = InstantiateSnapper("Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
-			Left = InstantiateSnapper("Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
-			Up = InstantiateSnapper("Up", new Vector3(0, otherDistanceY, 0), 0);
-			Down = InstantiateSnapper("Down", new Vector3(0, -otherDistanceY, 0), 0);
+			Right = Instantiate(this.gameObject);
+			Left = Instantiate(this.gameObject);
+			Up = Instantiate(this.gameObject);
+			Down = Instantiate(this.gameObject);
+
+			SetSnapper(ref Right, "Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
+			SetSnapper(ref Left, "Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
+			SetSnapper(ref Up, "Up", new Vector3(0, otherDistanceY, 0), 0);
+			SetSnapper(ref Down, "Down", new Vector3(0, -otherDistanceY, 0), 0);
 		}
 
 		otherDistanceX = 4f;
 		otherAdjustmentY = 0f;
 		otherZRotation = 0;
 
-		CheckForDuplicationRecursive(baseTransform, 0);
+		DeleteDuplicatesRecursive(baseTransform, 0);
 	}
 
 	public void DestructSnappers()
