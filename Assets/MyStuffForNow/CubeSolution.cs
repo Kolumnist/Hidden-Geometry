@@ -1,12 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.HID;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+
+
+/* Rules
+ * 
+/ Rule 1: Start Transform is floor
+/ Rule 2: First in the same hierarchy horizontally and vertically are exact R=R, L=L, U=U, D=D
+/ Rule 3: If the "First starting in Root" repeats itself once then it is Ceiling
+/ Rule 4: If any direction repeats the first time, then it is the opposite of the "First starting in Root"
+/ Rule 5: If any direction repeats a second time, then it is the opposite of itself
+ *
+*/
 
 public class CubeSolution : MonoBehaviour
 {
-    List<string> directions = new List<string>();
-	List<Transform> emptySnappers = new List<Transform>();
+	ObjectMaterialChanger objectMaterialChanger;
+
+	List<string> directions = new List<string>();
+	List<Transform> invalidSnappers = new List<Transform>();
 
     int countRight = 0;
     int countLeft = 0;
@@ -19,17 +31,42 @@ public class CubeSolution : MonoBehaviour
 	bool isUpFSIR = false;
 	bool isDownFSIR = false;
 
-	bool getsTerminated = false;
+	bool noInstantCeiling = false;
 
-	/* Rules
-     * 
-    / Rule 1: Start Transform is floor
-    / Rule 2: First in the same hierarchy horizontally and vertically are exact R=R, L=L, U=U, D=D
-    / Rule 3: If the "First starting in Root" repeats itself once then it is Ceiling
-    / Rule 4: If any direction repeats the first time, then it is the opposite of the "First starting in Root"
-    / Rule 5: If any direction repeats a second time, then it is the opposite of itself
-     *
-    */
+	bool getsTerminated = false;
+	
+	public void Start()
+	{
+		if (this.transform.name.Equals("Base"))
+		{
+			objectMaterialChanger = GetComponent<ObjectMaterialChanger>();
+			//DirectionsRecursive(this.transform);
+		}
+	}
+
+	public void Solution()
+	{
+		DirectionsRecursive(this.transform);
+
+		if (!getsTerminated)
+		{
+			Debug.Log("YAAAAAY");
+			objectMaterialChanger.ChangeMaterial(true);
+		}
+
+		isRightFSIR = false;
+		isLeftFSIR = false;
+		isUpFSIR = false;
+		isDownFSIR = false;
+		noInstantCeiling = false;
+		getsTerminated = false;
+		countRight = 0;
+		countLeft = 0;
+		countUp = 0;
+		countDown = 0;
+		directions.Clear();
+		invalidSnappers.Clear();
+	}
 
 	private void DirectionsRecursive(Transform current)
 	{
@@ -39,9 +76,10 @@ public class CubeSolution : MonoBehaviour
 			return;
 		}
 
-		if (current.GetComponent<XRSocketInteractor>().interactablesSelected.Count == 0)
+		if (current.GetComponent<XRSocketInteractor>().interactablesSelected.Count == 0 
+			|| !current.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Square"))
 		{
-			emptySnappers.Add(current);
+			invalidSnappers.Add(current);
 			return;
 		}
 
@@ -71,7 +109,6 @@ public class CubeSolution : MonoBehaviour
 
 		foreach (Transform child in current)
 		{
-			Debug.Log(child.name);
 			DirectionsRecursive(child);
 		}
 	}
@@ -94,8 +131,14 @@ public class CubeSolution : MonoBehaviour
 		// Rule 3: If the "First starting in Root" repeats itself once then it is Ceiling
 		if (isFirstStartingInRoot && count == 2)
 		{
+			//I hate this but there is ONE f edge case
+			if (!current.transform.name.Equals(current.parent.transform.name))
+			{
+				noInstantCeiling = true;
+			}
+		
 			CheckDirections("Ceiling");
-			directions.Add("Ceiling"); 
+			directions.Add("Ceiling");
 			return;
 		}
 		
@@ -114,11 +157,45 @@ public class CubeSolution : MonoBehaviour
 		// Rule 5: If any direction repeats a second time, then it is the opposite of itself
 		if (count == 3)
 		{
+			// Temporary Solution for frickn edge case
+			if (noInstantCeiling)
+			{
+				switch (current.name)
+				{
+					case "Right":
+						CheckDirections("Down");
+						directions.Add("Down");
+						break;
+					case "Left":
+						CheckDirections("Up");
+						directions.Add("Up");
+						break;
+					case "Up":
+						CheckDirections("Right");
+						directions.Add("Right");
+						break;
+					case "Down":
+						CheckDirections("Left");
+						directions.Add("Left");
+						break;
+				}
+				return;
+			}
 			OppositeDirectionOf(current.name); 
 			return;
 		}
 
 		getsTerminated = true;
+	}
+
+	private void CheckDirections(string direction)
+	{
+		if (directions.Contains(direction))
+		{
+			Debug.Log("Incorrect Net");
+			getsTerminated = true;
+			objectMaterialChanger.ChangeMaterial(false);
+		}
 	}
 
 	private void OppositeDirectionOf(string direction)
@@ -142,19 +219,5 @@ public class CubeSolution : MonoBehaviour
 				directions.Add("Up");
 				break;
 		}
-	}
-
-	private void CheckDirections(string direction)
-	{
-		if (directions.Contains(direction))
-		{
-			Debug.Log("Incorrect Net");
-			getsTerminated = true; 
-		}
-	}
-
-	public void Solution()
-	{
-		DirectionsRecursive(this.transform);
 	}
 }
