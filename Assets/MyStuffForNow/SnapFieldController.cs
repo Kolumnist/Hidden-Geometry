@@ -3,9 +3,6 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class SnapFieldController : MonoBehaviour
 {
-	[SerializeField]
-	private GameObject snapPrefab;
-
 	private Transform baseTransform;
 
 	private GameObject Right;
@@ -30,10 +27,9 @@ public class SnapFieldController : MonoBehaviour
 		}
 	}
 
-	// Currently one bug with the base as multiple snappers can exist in that place
-
 	private void DeleteDuplicatesRecursive(Transform current, int currentlyFoundCount)
 	{
+		float maxDistance = 0.21f;
 		if (current == null) return;
 
 		foreach (Transform child in current)
@@ -46,24 +42,26 @@ public class SnapFieldController : MonoBehaviour
 				break;
 			}
 
-			if (Right != null && Vector3.Distance(Right.transform.position, child.position) < 0.21f)
+			var x = Vector3.Distance(baseTransform.position, Right.transform.position);
+
+			if (Right != null && (Vector3.Distance(Right.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance))
 			{
 				Destroy(Right);
 				currentlyFoundCount++;
 			}
-			else if (Down != null && Vector3.Distance(Down.transform.position, child.position) < 0.21f)
-			{
-				Destroy(Down);
-				currentlyFoundCount++;
-			}
-			else if (Left != null && Vector3.Distance(Left.transform.position, child.position) < 0.21f)
+			else if (Left != null && (Vector3.Distance(Left.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance))
 			{
 				Destroy(Left);
 				currentlyFoundCount++;
 			}
-			else if (Up != null && Vector3.Distance(Up.transform.position, child.position) < 0.21f)
+			else if (Up != null && (Vector3.Distance(Up.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance))
 			{
 				Destroy(Up);
+				currentlyFoundCount++;
+			}
+			else if (Down != null && (Vector3.Distance(Down.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance))
+			{
+				Destroy(Down);
 				currentlyFoundCount++;
 			}
 		}
@@ -136,13 +134,12 @@ public class SnapFieldController : MonoBehaviour
 			otherDistanceX = 2.73f;
 			otherAdjustmentY = 0.73f;
 			otherZRotation = 60;
-			zRotation = transform.parent != null && transform.parent.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
+			
+			// Help making this better appreciated
+			zRotation = !transform.name.Equals("Base") && transform.parent.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
 
 			Right = Instantiate(this.gameObject);
 			Left = Instantiate(this.gameObject);
-			
-			SetSnapper(ref Right, "Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
-			SetSnapper(ref Left, "Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
 
 			switch (this.name)
 			{
@@ -160,6 +157,8 @@ public class SnapFieldController : MonoBehaviour
 					SetSnapper(ref Down, "Down", new Vector3(0, -otherDistanceY, 0), 0);
 					break;
 			}
+			SetSnapper(ref Right, "Right", new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
+			SetSnapper(ref Left, "Left", new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
 		}
 		else
 		{
