@@ -3,10 +3,16 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class PyramidSolution : Solution
 {
+	bool isRightFSIR = false;
+	bool isLeftFSIR = false;
+
 	public override void StartAlgorithm()
 	{
 		DirectionsRecursive(this.transform);
 		EndSolution(4);
+
+		isRightFSIR = false;
+		isLeftFSIR = false;
 	}
 
 	private void DirectionsRecursive(Transform current)
@@ -34,13 +40,14 @@ public class PyramidSolution : Solution
 		switch (current.name)
 		{
 			case "Right":
-				ApplyRules(current, ref countRight);
+				ApplyRules(current, ref isRightFSIR, ref countRight);
 				break;
 			case "Left":
-				ApplyRules(current, ref countLeft);
+				ApplyRules(current, ref isLeftFSIR, ref countLeft);
 				break;
 			case "Down":
-				ApplyRules(current, ref countDown);
+				bool useless = false;
+				ApplyRules(current, ref useless, ref countDown);
 				break;
 			default:
 				snappers.Add(current);
@@ -59,9 +66,14 @@ public class PyramidSolution : Solution
 		}
 	}
 
-	private void ApplyRules(Transform current, ref int count)
+	private void ApplyRules(Transform current, ref bool isFirstStartingInRoot, ref int count)
 	{
 		count++;
+		
+		if (current.parent.name == "Base" && current.childCount != 0)
+		{
+			isFirstStartingInRoot = true;
+		}
 
 		if (count == 1)
 		{
@@ -70,7 +82,7 @@ public class PyramidSolution : Solution
 			return;
 		}
 
-		if (count == 2)
+		if (count == 2 && isFirstStartingInRoot)
 		{
 			snappers.Add(current);
 			CheckDirections(current, "Down");

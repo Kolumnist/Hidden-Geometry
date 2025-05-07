@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4029088669857869167}
   - component: {fileID: 240732063251504382}
   - component: {fileID: 6538441491180928329}
+  - component: {fileID: 6066961998677371822}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -35,7 +36,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 40.673, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2608419295022034672
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -139,10 +140,34 @@ MonoBehaviour:
       m_Calls: []
   m_SelectEntered:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6538441491180928329}
+        m_TargetAssemblyTypeName: SnapFieldController, Assembly-CSharp
+        m_MethodName: CreateSnappers
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_SelectExited:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6538441491180928329}
+        m_TargetAssemblyTypeName: SnapFieldController, Assembly-CSharp
+        m_MethodName: DestructSnappers
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_StartingHoverFilters: []
   m_StartingSelectFilters: []
   m_ShowInteractableHoverMeshes: 0
@@ -168,4 +193,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb448cb0b6747247a87dc03f3c215fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snapPrefab: {fileID: 0}
+--- !u!114 &6066961998677371822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186014920361243355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aff594d3a206c48498e604d032acfee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _3DObject: {fileID: 0}
+  correctMaterial: {fileID: 2100000, guid: 4b27563d71dee9e4aaaf259c888f9c2d, type: 2}
+  falseMaterial: {fileID: 2100000, guid: b60c5c24e75e3014d99b65701caecb83, type: 2}

@@ -25,6 +25,15 @@ public class SnapFieldController : MonoBehaviour
 		{
 			baseTransform = baseTransform.parent;
 		}
+
+		foreach(Transform child in this.transform)
+		{
+			if(child.GetComponent<SnapFieldController>() == null)
+			{
+				Destroy(child.gameObject);
+				Debug.Log("Hey Interesting");
+			}
+		}
 	}
 
 	private void DeleteDuplicatesRecursive(Transform current, int currentlyFoundCount)
@@ -34,7 +43,6 @@ public class SnapFieldController : MonoBehaviour
 
 		foreach (Transform child in current)
 		{
-			Debug.Log(child.name);
 			DeleteDuplicatesRecursive(child, currentlyFoundCount);
 
 			if (currentlyFoundCount == 3 || current == this.transform)
@@ -78,7 +86,7 @@ public class SnapFieldController : MonoBehaviour
 
 	public void CreateSnappers()
 	{
-		Transform oldestInteractable = GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform;
+		Transform oldestInteractable = GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
 		
 		Debug.Log("Creates: " + transform.name + " which holds a " + oldestInteractable.name);
 
@@ -134,9 +142,10 @@ public class SnapFieldController : MonoBehaviour
 			otherDistanceX = 2.73f;
 			otherAdjustmentY = 0.73f;
 			otherZRotation = 60;
-			
+
 			// Help making this better appreciated
-			zRotation = !transform.name.Equals("Base") && transform.parent.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Triangle") ? 0 : 90;
+			bool shouldResetRotation = transform.name.Equals("Base") || transform.parent.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.name.StartsWith("Triangle") == true;
+			zRotation = shouldResetRotation ? 0 : 90;
 
 			Right = Instantiate(this.gameObject);
 			Left = Instantiate(this.gameObject);
@@ -148,6 +157,9 @@ public class SnapFieldController : MonoBehaviour
 					break;
 				case "Left":
 					transform.Rotate(new Vector3(0, 0, zRotation));
+					break;
+				case "Up":
+					zRotation = 0;
 					break;
 				case "Down":
 					transform.Rotate(new Vector3(0, 0, zRotation = 180));

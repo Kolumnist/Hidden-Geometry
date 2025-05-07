@@ -22,6 +22,16 @@ public abstract class Solution : MonoBehaviour
 	internal bool isCorrect = true;
 
 	public virtual void StartAlgorithm() { }
+	internal void CheckDirections(Transform current, string direction)
+	{
+		if (directions.Contains(direction))
+		{
+			isCorrect = false;
+			errorTransform = current;
+			return;
+		}
+		directions.Add(direction);
+	}
 
 	internal void EndSolution(int validAmount)
 	{
@@ -49,17 +59,6 @@ public abstract class Solution : MonoBehaviour
 		countDown = 0;
 		isCorrect = true;
 		errorTransform = null;
-	}
-
-	internal void CheckDirections(Transform current, string direction)
-	{
-		if (directions.Contains(direction))
-		{
-			isCorrect = false;
-			errorTransform = current;
-			return;
-		}
-		directions.Add(direction);
 	}
 
 	private void ChangeMaterial(bool isCorrect)
