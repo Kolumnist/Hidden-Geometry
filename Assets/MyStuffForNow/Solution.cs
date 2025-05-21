@@ -13,7 +13,7 @@ public abstract class Solution : MonoBehaviour
 	internal List<string> directions = new List<string>();
 	internal List<Transform> snappers = new List<Transform>();
 	internal List<Transform> emptySnappers = new List<Transform>();
-	internal Transform errorTransform = null;
+	internal Transform errorTransform;
 
 	internal int countRight = 0;
 	internal int countLeft = 0;
@@ -45,7 +45,7 @@ public abstract class Solution : MonoBehaviour
 			Debug.Log("Incorrect Net");
 			ChangeMaterial(false);
 
-			var selected = errorTransform.GetComponent<XRSocketInteractor>().interactablesSelected[0] ?? null;
+			var selected = errorTransform == null ? null : errorTransform.GetComponent<XRSocketInteractor>().interactablesSelected[0];
 			if (selected != null) 
 				selected.transform.GetComponent<Renderer>().material = falseMaterial;
 		}

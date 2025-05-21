@@ -5,6 +5,7 @@ public class PyramidSolution : Solution
 {
 	bool isRightFSIR = false;
 	bool isLeftFSIR = false;
+	bool isDownFSIR = false;
 
 	public override void StartAlgorithm()
 	{
@@ -21,7 +22,7 @@ public class PyramidSolution : Solution
 		{
 			return;
 		}
-		
+
 		// I have to do this differently somehow but currently its working. It basically determines if I use only square or not
 		if (current.GetComponent<XRSocketInteractor>().interactablesSelected.Count != 0 && !current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.name.StartsWith("Triangle"))
 		{
@@ -46,8 +47,7 @@ public class PyramidSolution : Solution
 				ApplyRules(current, ref isLeftFSIR, ref countLeft);
 				break;
 			case "Down":
-				bool useless = false;
-				ApplyRules(current, ref useless, ref countDown);
+				ApplyRules(current, ref isDownFSIR, ref countDown);
 				break;
 			default:
 				snappers.Add(current);
@@ -62,6 +62,7 @@ public class PyramidSolution : Solution
 			{
 				countRight = 0;
 				countLeft = 0;
+				isDownFSIR = false;
 			}
 		}
 	}
@@ -69,7 +70,7 @@ public class PyramidSolution : Solution
 	private void ApplyRules(Transform current, ref bool isFirstStartingInRoot, ref int count)
 	{
 		count++;
-		
+
 		if (current.parent.name == "Base" && current.childCount != 0)
 		{
 			isFirstStartingInRoot = true;
@@ -78,18 +79,30 @@ public class PyramidSolution : Solution
 		if (count == 1)
 		{
 			snappers.Add(current);
-			CheckDirections(current, current.name);
+			CheckDirections(current, !isDownFSIR ? current.name : OppositeDirectionOf(current.name));
 			return;
 		}
 
 		if (count == 2 && isFirstStartingInRoot)
 		{
 			snappers.Add(current);
-			CheckDirections(current, "Down");
+			CheckDirections(current, !isDownFSIR ? "Down" : OppositeDirectionOf(current.name));
 			return;
 		}
 
 		isCorrect = false;
 		errorTransform = current;
+	}
+
+	private string OppositeDirectionOf(string direction)
+	{
+		switch (direction)
+		{
+			case "Right":
+				return "Left";
+			case "Left":
+				return "Right";
+			default: return "";
+		}
 	}
 }
