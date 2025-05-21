@@ -11,6 +11,7 @@ public class SnapFieldController : MonoBehaviour
 	private GameObject Up;
 
 	private float xDistance = 0;
+	private float yDistance = 0;
 	private int zRotation = 0;
 
 	private bool isDestructing = false;
@@ -42,38 +43,55 @@ public class SnapFieldController : MonoBehaviour
 		{
 			baseTransform = baseTransform.parent;
 		}
-		/*foreach(Transform child in this.transform)
-		{
-			if(child.GetComponent<SnapFieldController>() == null)
-			{
-				Destroy(child.gameObject);
-				Debug.Log("Hey Interesting");
-			}
-		}*/
 	}
 
 	public void CreateSnappers()
 	{
-		if (isDestructing) return;
-	
+		if (isDestructing) return;		
+		
 		string interactableName = GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.name;
-		Debug.Log("Creates: " + transform.name + " which holds a " + interactableName);
-		var parentInteractor = transform.parent.GetComponent<XRSocketInteractor>();
+		string parentInteractableName = "";
+		if (transform.parent.GetComponent<XRSocketInteractor>() != null)
+		{
+			parentInteractableName = transform.parent.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.name;
+		}
 
+		Debug.Log("Creates: " + transform.name + " which holds a " + interactableName);
+		SnappersPerTile(interactableName, parentInteractableName);
+
+		otherDistanceX = 4f;
+		otherAdjustmentY = 0f;
+		otherZRotation = 0;
+
+		DeleteDuplicatesRecursive(baseTransform);
+	}
+
+	private void SnappersPerTile(string interactableName, string parentInteractableName)
+	{
 		if (interactableName.StartsWith(Names.Circle))
 		{
 			// We do not create new snapping fields as that would only increase complexity but is not helpful for any 3dobjects net
 		}
-		else if(interactableName.StartsWith(Names.Quad))
+		else if (interactableName.StartsWith(Names.Quad))
 		{
 			xDistance = 1f;
+			yDistance = 0f;
+			zRotation = 0;
+			if (parentInteractableName.StartsWith(Names.TriangleEqui))
+			{
+				xDistance = 0.86f;
+				yDistance = 0.5f;
+				zRotation = 90;
+			}
 			switch (this.name)
 			{
 				case Names.Right:
-					this.transform.localPosition += new Vector3(xDistance, 0, 0);
+					this.transform.localPosition += new Vector3(xDistance, yDistance, 0);
+					this.transform.Rotate(new Vector3(0, 0, zRotation));
 					break;
 				case Names.Left:
-					this.transform.localPosition += new Vector3(-xDistance, 0, 0);
+					this.transform.localPosition += new Vector3(xDistance = -xDistance, yDistance, 0);
+					this.transform.Rotate(new Vector3(0, 0, zRotation = -zRotation));
 					break;
 				case Names.Up:
 					GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.GetComponent<Renderer>().material = falseMaterial;
@@ -121,11 +139,14 @@ public class SnapFieldController : MonoBehaviour
 
 			Right = Instantiate(this.gameObject);
 			Left = Instantiate(this.gameObject);
-			
+			otherDistanceX = 2.73f;
+			otherAdjustmentY = 0.73f;
+			otherZRotation = 60;
+
 			// Help making this better appreciated
-			bool shouldResetRotation = transform.name.Equals("Base") || parentInteractor.interactablesSelected[0].transform.name.StartsWith(Names.TriangleEqui) == true;
+			bool shouldResetRotation = transform.name.Equals("Base") || parentInteractableName.StartsWith(Names.TriangleEqui) == true;
 			zRotation = shouldResetRotation ? 0 : 90;
-			
+
 			switch (this.name)
 			{
 				case Names.Right:
@@ -146,14 +167,11 @@ public class SnapFieldController : MonoBehaviour
 					break;
 			}
 
-			otherDistanceX = 2.73f;
-			otherAdjustmentY = 0.73f;
-			otherZRotation = 60;
 			SetSnapper(ref Right, Names.Right, new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
 			SetSnapper(ref Left, Names.Left, new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
 		}
 		else if (interactableName.StartsWith(Names.TriangleLong))
-		{	
+		{
 			if (!this.name.EndsWith("_Large") || !this.name.Equals("Base"))
 			{
 				GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.GetComponent<Renderer>().material = falseMaterial;
@@ -174,12 +192,6 @@ public class SnapFieldController : MonoBehaviour
 					break;
 			}
 		}
-
-		otherDistanceX = 4f;
-		otherAdjustmentY = 0f;
-		otherZRotation = 0;
-
-		DeleteDuplicatesRecursive(baseTransform);
 	}
 
 	private void SetSnapper(ref GameObject snapper, string name, Vector3 position, float zRotation)
@@ -233,23 +245,20 @@ public class SnapFieldController : MonoBehaviour
 	{
 		isDestructing = true;
 		Debug.Log("Begin Destructing for " + this.gameObject);
-		
-		/*Transform oldestInteractable = GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform;
-		if (oldestInteractable.name.StartsWith("Quad"))
+
+		if (xDistance != 0)
 		{
-			if(this.name == "Right")
-				transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(0.3f, 0, 0), Quaternion.identity);
-			else if(this.name == "Left")
-				transform.SetLocalPositionAndRotation(transform.localPosition + new Vector3(-0.3f, 0, 0), Quaternion.identity);
-		}*/
+			this.transform.position += new Vector3(-xDistance, 0, 0);
+		}
+		
+		if (yDistance != 0)
+		{
+			this.transform.position += new Vector3(-yDistance, 0, 0);
+		}
 
 		if (zRotation != 0)
 		{
 			this.transform.Rotate(0, 0, -zRotation);
-		}
-		if (xDistance != 0)
-		{
-			this.transform.position += new Vector3(-xDistance, 0, 0);
 		}
 
 		foreach (Transform child in transform)
