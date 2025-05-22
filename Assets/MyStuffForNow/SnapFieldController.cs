@@ -229,22 +229,22 @@ public class SnapFieldController : MonoBehaviour
 			}
 
 			if (Right != null && 
-				(Vector3.Distance(Right.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Right) && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance)))
+				(Vector3.Distance(Right.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Left) && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance)))
 			{
 				Destroy(Right);
 			}
 			else if (Left != null &&
-				(Vector3.Distance(Left.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Left) && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance)))
+				(Vector3.Distance(Left.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Right) && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance)))
 			{
 				Destroy(Left);
 			}
 			else if (Up != null &&
-				(Vector3.Distance(Up.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Up) && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance)))
+				(Vector3.Distance(Up.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Down) && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance)))
 			{
 				Destroy(Up);
 			}
 			else if (Down != null && 
-				(Vector3.Distance(Down.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Down) && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance)))
+				(Vector3.Distance(Down.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Up) && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance)))
 			{
 				Destroy(Down);
 			}
