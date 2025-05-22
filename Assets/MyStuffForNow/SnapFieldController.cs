@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -13,8 +14,6 @@ public class SnapFieldController : MonoBehaviour
 	private float xDistance = 0;
 	private float yDistance = 0;
 	private int zRotation = 0;
-
-	private bool isDestructing = false;
 
 	// new snapperobjects position and rotation
 	private float otherDistanceX = 4f;
@@ -47,9 +46,12 @@ public class SnapFieldController : MonoBehaviour
 
 	public void CreateSnappers()
 	{
-		if (isDestructing) return;		
-		
 		string interactableName = GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.name;
+		if (interactableName == null)
+		{
+			Debug.Log("Is Null");
+		}
+
 		string parentInteractableName = "";
 		if (transform.parent.GetComponent<XRSocketInteractor>() != null)
 		{
@@ -94,11 +96,20 @@ public class SnapFieldController : MonoBehaviour
 					this.transform.Rotate(new Vector3(0, 0, zRotation = -zRotation));
 					break;
 				case Names.Up:
+					xDistance = 0f;
+					yDistance = 0f;
+					zRotation = 0;
 					GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.GetComponent<Renderer>().material = falseMaterial;
 					return;
 				case Names.Down:
+					xDistance = 0f;
+					yDistance = 0f;
+					zRotation = 0;
 					GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.GetComponent<Renderer>().material = falseMaterial;
 					return;
+				default:
+					xDistance = 0f;
+					break;
 			}
 
 			Right = Instantiate(gameObject);
@@ -172,7 +183,7 @@ public class SnapFieldController : MonoBehaviour
 		}
 		else if (interactableName.StartsWith(Names.TriangleLong))
 		{
-			if (!this.name.EndsWith("_Large") || !this.name.Equals("Base"))
+			if (!this.name.EndsWith("_Large") && !this.name.Equals("Base"))
 			{
 				GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.GetComponent<Renderer>().material = falseMaterial;
 				return;
@@ -217,25 +228,23 @@ public class SnapFieldController : MonoBehaviour
 				break;
 			}
 
-			var x = Vector3.Distance(baseTransform.position, Right.transform.position);
-
 			if (Right != null && 
-				(Vector3.Distance(Right.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance))
+				(Vector3.Distance(Right.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Right) && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance)))
 			{
 				Destroy(Right);
 			}
-			else if (Left != null && 
-				(Vector3.Distance(Left.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance))
+			else if (Left != null &&
+				(Vector3.Distance(Left.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Left) && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance)))
 			{
 				Destroy(Left);
 			}
-			else if (Up != null && 
-				(Vector3.Distance(Up.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance))
+			else if (Up != null &&
+				(Vector3.Distance(Up.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Up) && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance)))
 			{
 				Destroy(Up);
 			}
 			else if (Down != null && 
-				(Vector3.Distance(Down.transform.position, child.position) < maxDistance || Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance))
+				(Vector3.Distance(Down.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Down) && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance)))
 			{
 				Destroy(Down);
 			}
@@ -243,30 +252,30 @@ public class SnapFieldController : MonoBehaviour
 	}
 	public void DestructSnappers()
 	{
-		isDestructing = true;
 		Debug.Log("Begin Destructing for " + this.gameObject);
 
 		if (xDistance != 0)
 		{
-			this.transform.position += new Vector3(-xDistance, 0, 0);
+			this.transform.localPosition += new Vector3(-xDistance, 0, 0);
+			xDistance = 0;
 		}
 		
 		if (yDistance != 0)
 		{
-			this.transform.position += new Vector3(-yDistance, 0, 0);
+			this.transform.localPosition += new Vector3(0, -yDistance, 0);
+			yDistance = 0;
 		}
 
 		if (zRotation != 0)
 		{
 			this.transform.Rotate(0, 0, -zRotation);
+			zRotation = 0;
 		}
 
 		foreach (Transform child in transform)
 		{
 			Destroy(child.gameObject);
 		}
-
-		isDestructing = false;
 	}
 
 	public Material falseMaterial;
