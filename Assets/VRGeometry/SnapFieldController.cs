@@ -1,3 +1,4 @@
+using Assets.MyStuffForNow.Tiles;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -76,15 +77,24 @@ public class SnapFieldController : MonoBehaviour
 		}
 		else if (interactableName.StartsWith(Names.Quad))
 		{
-			xDistance = 1f;
-			yDistance = 0f;
-			zRotation = 0;
+			Quad quad = new Quad();
+			xDistance = quad.X_DistanceSnapField;
+			yDistance = quad.Y_DistanceSnapField;
+			zRotation = quad.Z_RotationSnapField;
+			otherDistanceX = quad.X_DistanceNewSnapFields;
+
 			if (parentInteractableName.StartsWith(Names.TriangleEqui))
 			{
-				xDistance = 0.86f;
-				yDistance = 0.5f;
-				zRotation = 90;
+				xDistance = quad.Triangle_X_DistanceSnapField;
+				yDistance = quad.Triangle_Y_DistanceSnapField;
+				zRotation = quad.Triangle_Z_RotationSnapField;
 			}
+
+			Right = Instantiate(gameObject);
+			Down = Instantiate(gameObject);
+			Left = Instantiate(gameObject);
+			Up = Instantiate(gameObject);
+
 			switch (this.name)
 			{
 				case Names.Right:
@@ -111,17 +121,10 @@ public class SnapFieldController : MonoBehaviour
 					xDistance = 0f;
 					break;
 			}
-
-			Right = Instantiate(gameObject);
-			Down = Instantiate(gameObject);
-			Left = Instantiate(gameObject);
-			Up = Instantiate(gameObject);
-
-			otherDistanceX = 5f;
-			SetSnapper(ref Right, Names.Right, new Vector3(otherDistanceX, 0, 0), 0);
-			SetSnapper(ref Left, Names.Left, new Vector3(-otherDistanceX, 0, 0), 0);
-			SetSnapper(ref Up, Names.Up + "_Large", new Vector3(0, otherDistanceY, 0), 0);
-			SetSnapper(ref Down, Names.Down + "_Large", new Vector3(0, -otherDistanceY, 0), 0);
+			SetNewSnapper(ref Right, Names.Right, new Vector3(otherDistanceX, 0, 0), 0);
+			SetNewSnapper(ref Left, Names.Left, new Vector3(-otherDistanceX, 0, 0), 0);
+			SetNewSnapper(ref Up, Names.Up + "_Large", new Vector3(0, otherDistanceY, 0), 0);
+			SetNewSnapper(ref Down, Names.Down + "_Large", new Vector3(0, -otherDistanceY, 0), 0);
 		}
 		else if (interactableName.StartsWith(Names.Square))
 		{
@@ -135,10 +138,10 @@ public class SnapFieldController : MonoBehaviour
 			Left = Instantiate(this.gameObject);
 			Up = Instantiate(this.gameObject);
 			Down = Instantiate(this.gameObject);
-			SetSnapper(ref Right, Names.Right, new Vector3(otherDistanceX, 0, 0), 0);
-			SetSnapper(ref Left, Names.Left, new Vector3(-otherDistanceX, 0, 0), 0);
-			SetSnapper(ref Up, Names.Up, new Vector3(0, otherDistanceY, 0), 0);
-			SetSnapper(ref Down, Names.Down, new Vector3(0, -otherDistanceY, 0), 0);
+			SetNewSnapper(ref Right, Names.Right, new Vector3(otherDistanceX, 0, 0), 0);
+			SetNewSnapper(ref Left, Names.Left, new Vector3(-otherDistanceX, 0, 0), 0);
+			SetNewSnapper(ref Up, Names.Up, new Vector3(0, otherDistanceY, 0), 0);
+			SetNewSnapper(ref Down, Names.Down, new Vector3(0, -otherDistanceY, 0), 0);
 		}
 		else if (interactableName.StartsWith(Names.TriangleEqui))
 		{
@@ -147,16 +150,18 @@ public class SnapFieldController : MonoBehaviour
 				GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.GetComponent<Renderer>().material = falseMaterial;
 				return;
 			}
-
-			Right = Instantiate(this.gameObject);
-			Left = Instantiate(this.gameObject);
-			otherDistanceX = 2.73f;
-			otherAdjustmentY = 0.73f;
-			otherZRotation = 60;
+			
+			TriangleEqui triangle = new TriangleEqui();
+			otherDistanceX = triangle.X_DistanceNewSnapFields;
+			otherAdjustmentY = triangle.Y_AdjustmentNewSnapFields;
+			otherZRotation = triangle.Z_RotationNewSnapFields;
 
 			// Help making this better appreciated
 			bool shouldResetRotation = transform.name.Equals("Base") || parentInteractableName.StartsWith(Names.TriangleEqui) == true;
-			zRotation = shouldResetRotation ? 0 : 90;
+			zRotation = shouldResetRotation ? triangle.Z_RotationSnapField : triangle.Triangle_Z_RotationSnapField;
+			
+			Right = Instantiate(this.gameObject);
+			Left = Instantiate(this.gameObject);
 
 			switch (this.name)
 			{
@@ -174,12 +179,12 @@ public class SnapFieldController : MonoBehaviour
 					break;
 				default: // Base
 					Down = Instantiate(this.gameObject);
-					SetSnapper(ref Down, Names.Down, new Vector3(0, -otherDistanceY, 0), 0);
+					SetNewSnapper(ref Down, Names.Down, new Vector3(0, -otherDistanceY, 0), 0);
 					break;
 			}
 
-			SetSnapper(ref Right, Names.Right, new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
-			SetSnapper(ref Left, Names.Left, new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
+			SetNewSnapper(ref Right, Names.Right, new Vector3(otherDistanceX, otherAdjustmentY, 0), -otherZRotation);
+			SetNewSnapper(ref Left, Names.Left, new Vector3(-otherDistanceX, otherAdjustmentY, 0), otherZRotation);
 		}
 		else if (interactableName.StartsWith(Names.TriangleLong))
 		{
@@ -199,13 +204,13 @@ public class SnapFieldController : MonoBehaviour
 					break;
 				default:
 					Down = Instantiate(this.gameObject);
-					SetSnapper(ref Down, Names.Down + "_Large", new Vector3(0, -otherDistanceY, 0), 0);
+					SetNewSnapper(ref Down, Names.Down + "_Large", new Vector3(0, -otherDistanceY, 0), 0);
 					break;
 			}
 		}
 	}
 
-	private void SetSnapper(ref GameObject snapper, string name, Vector3 position, float zRotation)
+	private void SetNewSnapper(ref GameObject snapper, string name, Vector3 position, float zRotation)
 	{
 		snapper.name = name;
 		snapper.transform.SetPositionAndRotation(position, Quaternion.identity);
@@ -225,26 +230,39 @@ public class SnapFieldController : MonoBehaviour
 
 			if (current == this.transform)
 			{
-				break;
+				continue;
 			}
 
-			if (Right != null && 
-				(Vector3.Distance(Right.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Left) && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance)))
+			if (Right != null && Vector3.Distance(Right.transform.position, child.position) < maxDistance)
 			{
 				Destroy(Right);
 			}
-			else if (Left != null &&
-				(Vector3.Distance(Left.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Right) && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance)))
+			else if (Left != null && Vector3.Distance(Left.transform.position, child.position) < maxDistance)
 			{
 				Destroy(Left);
 			}
-			else if (Up != null &&
-				(Vector3.Distance(Up.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Down) && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance)))
+			else if (Up != null && Vector3.Distance(Up.transform.position, child.position) < maxDistance)
 			{
 				Destroy(Up);
 			}
-			else if (Down != null && 
-				(Vector3.Distance(Down.transform.position, child.position) < maxDistance || (child.name.StartsWith(Names.Up) && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance)))
+			else if (Down != null && Vector3.Distance(Down.transform.position, child.position) < maxDistance)
+			{
+				Destroy(Down);
+			}
+
+			if (Right != null && child.name.StartsWith(Names.Left) && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance)
+			{
+				Destroy(Right);
+			}
+			else if (Left != null && child.name.StartsWith(Names.Right) && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance)
+			{
+				Destroy(Left);
+			}
+			else if (Up != null && child.name.StartsWith(Names.Down) && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance)
+			{
+				Destroy(Up);
+			}
+			else if (Down != null && child.name.StartsWith(Names.Up) && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance)
 			{
 				Destroy(Down);
 			}
