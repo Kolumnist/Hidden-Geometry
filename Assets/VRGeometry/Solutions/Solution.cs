@@ -11,8 +11,7 @@ public abstract class Solution : MonoBehaviour
 	public Material falseMaterial;
 
 	internal List<string> directions = new List<string>();
-	internal List<Transform> snappers = new List<Transform>();
-	internal List<Transform> emptySnappers = new List<Transform>();
+	internal List<Transform> snapfields = new List<Transform>();
 	internal Transform errorTransform;
 
 	internal int countRight = 0;
@@ -22,6 +21,7 @@ public abstract class Solution : MonoBehaviour
 	internal bool isCorrect = true;
 
 	public virtual void StartAlgorithm() { }
+
 	internal void CheckDirections(Transform current, string direction)
 	{
 		if (directions.Contains(direction))
@@ -35,7 +35,7 @@ public abstract class Solution : MonoBehaviour
 
 	internal void EndSolution(int validAmount)
 	{
-		if (isCorrect && snappers.Count == validAmount)
+		if (isCorrect && snapfields.Count == validAmount)
 		{
 			Debug.Log("YAAAAAY");
 			ChangeMaterial(true);
@@ -50,8 +50,7 @@ public abstract class Solution : MonoBehaviour
 				selected.transform.GetComponent<Renderer>().material = falseMaterial;
 		}
 
-		snappers.Clear();
-		emptySnappers.Clear();
+		snapfields.Clear();
 		directions.Clear();
 		countRight = 0;
 		countLeft = 0;
