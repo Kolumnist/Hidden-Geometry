@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
-public class TriangularPyramidSolution : Solution
+public class TriangularPyramidSolution : RulesSolution
 {
 	bool isRightFSIR = false;
 	bool isLeftFSIR = false;

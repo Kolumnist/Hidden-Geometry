@@ -11,9 +11,8 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
  *
 */
 
-public class CubeSolution : Solution
+public class CubeSolution : RulesSolution
 {
-
 	// FSIR = First Starting in Root
 	bool isRightFSIR = false;
 	bool isLeftFSIR = false;

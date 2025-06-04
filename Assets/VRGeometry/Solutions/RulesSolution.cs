@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
-public abstract class Solution : MonoBehaviour
+public abstract class RulesSolution : MonoBehaviour
 {
 	[SerializeField]
 	private Transform _3DObject;

@@ -1,3 +1,4 @@
+using Assets.VRGeometry;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class SolutionWithFolding : MonoBehaviour
 {
     [SerializeField]
     GameObject entry;
+
+	private float[] angles = { 90, 109.5f };
 
 	private Transform entryInteractable;
 
@@ -39,18 +42,18 @@ public class SolutionWithFolding : MonoBehaviour
 			return;
 		}
 
-		if (!current.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Square"))
+		/*if (!current.GetComponent<XRSocketInteractor>().GetOldestInteractableSelected().transform.name.StartsWith("Square"))
 		{
 			isLegitimate = false;
 			return;
-		}
+		}*/
 
         if (!current.name.Equals("Base"))
         {
-			Transform interactable = current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
-			CreateHinge(current, interactable, 90);
-			tileTransforms.Add(interactable);
-			hingedTransforms.Add(interactable);
+			Transform tile = current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
+			CreateHinge(current, tile, 109.5f);
+			tileTransforms.Add(tile);
+			hingedTransforms.Add(tile);
 		}
 
 		foreach (Transform child in current)
@@ -67,15 +70,15 @@ public class SolutionWithFolding : MonoBehaviour
      * D = [0 1 0], [-1 0 0]
      */
 
-	private void CreateHinge(Transform snapzone, Transform interactable, float angle)
+	private void CreateHinge(Transform snapzone, Transform tile, float angle)
     {
-		HingeJoint hingeJoint = interactable.gameObject.AddComponent<HingeJoint>();
+		HingeJoint hingeJoint = tile.gameObject.AddComponent<HingeJoint>();
         hingeJoint.connectedBody = snapzone.parent.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.GetComponent<Rigidbody>();
         
 		Vector3 anchor;
 		Vector3 axis;
 
-		(anchor, axis) = GetAnchorAxisTuple(snapzone, interactable);
+		(anchor, axis) = GetAnchorAxisTuple(snapzone, tile);
 
 		hingeJoint.anchor = anchor;
 		hingeJoint.axis = axis;
@@ -97,26 +100,26 @@ public class SolutionWithFolding : MonoBehaviour
         hingeJoint.limits = limits;
 	}
 
-	private (Vector3, Vector3) GetAnchorAxisTuple(Transform snapzone, Transform interactable)
+	private (Vector3, Vector3) GetAnchorAxisTuple(Transform snapzone, Transform tile)
 	{
 		Vector3 anchor;
 		Vector3 axis;
 
-		if(interactable.name.StartsWith("Triangle"))
+		if(tile.name.StartsWith(Names.TriangleEqui))
 		{
 			switch (snapzone.name)
 			{
-				case "Right":
-					anchor = new Vector3(-1, 0, 0);
-					axis = new Vector3(0, -1, 0);
+				case Names.Right:
+					anchor = new Vector3(0, -1, 0);
+					axis = new Vector3(1, 0, 0);
 					break;
-				case "Left":
-					anchor = new Vector3(1, 0, 0);
-					axis = new Vector3(0, 1, 0);
+				case Names.Left:
+					anchor = new Vector3(0, -1, 0);
+					axis = new Vector3(1, 0, 0);
 					break;
-				case "Down":
-					anchor = new Vector3(0, 1, 0);
-					axis = new Vector3(-1, 0, 0);
+				case Names.Down:
+					anchor = new Vector3(0, -1, 0);
+					axis = new Vector3(1, 0, 0);
 					break;
 				default:
 					anchor = Vector3.zero;
@@ -128,19 +131,19 @@ public class SolutionWithFolding : MonoBehaviour
 		{
 			switch (snapzone.name)
 			{
-				case "Right":
+				case Names.Right:
 					anchor = new Vector3(-1, 0, 0);
 					axis = new Vector3(0, -1, 0);
 					break;
-				case "Left":
+				case Names.Left:
 					anchor = new Vector3(1, 0, 0);
 					axis = new Vector3(0, 1, 0);
 					break;
-				case "Up":
+				case Names.Up:
 					anchor = new Vector3(0, -1, 0);
 					axis = new Vector3(1, 0, 0);
 					break;
-				case "Down":
+				case Names.Down:
 					anchor = new Vector3(0, 1, 0);
 					axis = new Vector3(-1, 0, 0);
 					break;
@@ -195,6 +198,14 @@ public class SolutionWithFolding : MonoBehaviour
 		}
 	}
 
+	private IEnumerator Waaaaaaait(Transform tile)
+	{
+		yield return new WaitForSeconds(0.5f);
+		tile.GetComponent<Rigidbody>().useGravity = false;
+		tile.GetComponent<Rigidbody>().isKinematic = true;
+		entry.SetActive(true);
+	}
+
 	public void ResetSolution()
 	{
 		JointLimits limits = new JointLimits
@@ -205,9 +216,8 @@ public class SolutionWithFolding : MonoBehaviour
 		foreach (Transform tile in tileTransforms)
 		{
 			tile.GetComponent<HingeJoint>().limits = limits;
+			StartCoroutine(Waaaaaaait(tile));
 			Destroy(tile.GetComponent<HingeJoint>(), 1);
-			tile.GetComponent<Rigidbody>().useGravity = false;
-			tile.GetComponent<Rigidbody>().isKinematic = true;
 		}
 
 		//delete the hingejoints AND change the rigidbodies again. (Order idk yet youll figure it out.)

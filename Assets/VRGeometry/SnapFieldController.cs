@@ -1,5 +1,5 @@
 using Assets.MyStuffForNow.Tiles;
-using System.Collections;
+using Assets.VRGeometry;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -21,20 +21,6 @@ public class SnapFieldController : MonoBehaviour
 	private readonly float otherDistanceY = 4f;
 	private float otherAdjustmentY = 0f;
 	private float otherZRotation = 0f;
-
-	private struct Names
-	{
-		public const string Circle = "Circle";
-		public const string Quad = "Quad";
-		public const string Square = "Square";
-		public const string TriangleEqui = "TriangleEquiliteral";
-		public const string TriangleLong = "TriangleLong";
-
-		public const string Right = "Right";
-		public const string Left = "Left";
-		public const string Up = "Up";
-		public const string Down = "Down";
-	}
 
 	private void Start()
 	{
