@@ -2,7 +2,6 @@ using Assets.VRGeometry;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class SolutionWithFolding : MonoBehaviour
@@ -14,7 +13,6 @@ public class SolutionWithFolding : MonoBehaviour
 
 	private Transform entryInteractable;
 
-	private readonly List<Transform> hingedTransforms = new List<Transform>();
 	private readonly List<Transform> tileTransforms = new List<Transform>();
 
 	LineRenderer lineRenderer = new LineRenderer();
@@ -53,7 +51,6 @@ public class SolutionWithFolding : MonoBehaviour
 			Transform tile = current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
 			CreateHinge(current, tile, 109.5f);
 			tileTransforms.Add(tile);
-			hingedTransforms.Add(tile);
 		}
 
 		foreach (Transform child in current)
@@ -226,10 +223,10 @@ public class SolutionWithFolding : MonoBehaviour
 
 	private void AdjustRigidbodies()
 	{
-		foreach(Transform t in hingedTransforms)
+		foreach(Transform tile in tileTransforms)
 		{
-			t.GetComponent<Rigidbody>().useGravity = true;
-			t.GetComponent<Rigidbody>().isKinematic = false;
+			tile.GetComponent<Rigidbody>().useGravity = true;
+			tile.GetComponent<Rigidbody>().isKinematic = false;
 		}
 	}
 }

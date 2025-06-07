@@ -73,5 +73,9 @@ public abstract class RulesSolution : MonoBehaviour
 		{
 			renderer.material = isCorrect ? correctMaterial : falseMaterial;
 		}
+		if(_3DObject.GetComponent<Renderer>() != null)
+		{
+			_3DObject.GetComponent<Renderer>().material = isCorrect ? correctMaterial : falseMaterial;
+		}
 	}
 }

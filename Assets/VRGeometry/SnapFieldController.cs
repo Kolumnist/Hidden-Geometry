@@ -137,7 +137,7 @@ public class SnapFieldController : MonoBehaviour
 				return;
 			}
 			
-			TriangleEqui triangle = new TriangleEqui();
+			TriangleEquiliteral triangle = new TriangleEquiliteral();
 			otherDistanceX = triangle.X_DistanceNewSnapFields;
 			otherAdjustmentY = triangle.Y_AdjustmentNewSnapFields;
 			otherZRotation = triangle.Z_RotationNewSnapFields;
@@ -236,19 +236,19 @@ public class SnapFieldController : MonoBehaviour
 				Destroy(Down);
 			}
 
-			if (Right != null && child.name.StartsWith(Names.Left) && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance)
+			if (Right != null && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance + 0.1f)
 			{
 				Destroy(Right);
 			}
-			else if (Left != null && child.name.StartsWith(Names.Right) && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance)
+			else if (Left != null && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance + 0.1f)
 			{
 				Destroy(Left);
 			}
-			else if (Up != null && child.name.StartsWith(Names.Down) && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance)
+			else if (Up != null && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance + 0.1f)
 			{
 				Destroy(Up);
 			}
-			else if (Down != null && child.name.StartsWith(Names.Up) && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance)
+			else if (Down != null && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance + 0.1f)
 			{
 				Destroy(Down);
 			}

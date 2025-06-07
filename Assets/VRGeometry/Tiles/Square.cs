@@ -1,16 +1,28 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Assets.MyStuffForNow.Tiles
+namespace Assets.VRGeometry.Tiles
 {
-	public abstract class Tile
+	public class Square
 	{
 		string Name { get; }
 		float a { get; }
-		float b { get; }
+		
+		Square(float scale)
+		{
+			Name = Names.Square;
+			a = 2 * scale;
 
-		string NameOfSnapfield {get; set;}
-		bool IsSnapped { get; set;}
-		bool HasTriangleParent { get; set;}
+
+		}
+
+		string NameOfSnapfield { get; set; }
+		bool IsSnapped { get; set; }
+		bool HasTriangleParent { get; set; }
 
 		// APPLIED ON THE SNAPFIELD
 		float X_DistanceSnapField { get; set; }

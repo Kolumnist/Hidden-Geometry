@@ -1,6 +1,6 @@
 ﻿namespace Assets.MyStuffForNow.Tiles
 {
-	public class TriangleEqui : Tile
+	public class TriangleEquiliteral : Tile
 	{
 		public string Name = "TriangleEquiliteral";
 		public string NameOfSnapfield = string.Empty;
@@ -12,6 +12,7 @@
 
 		public float X_DistanceNewSnapFields = 2.73f;
 		public readonly float Y_DistanceNewSnapFields = 4f;
+
 		public float Y_AdjustmentNewSnapFields = 0.73f;
 		public float Z_RotationNewSnapFields = 60;
 	}
