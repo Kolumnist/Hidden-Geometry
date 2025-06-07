@@ -5,7 +5,8 @@ namespace Assets.VRGeometry.Solutions.FoldSolutions
 {
 	public class PyramidSquareFoldSolution : FoldSolution
 	{
-		private readonly float angleMaxLimit = 122.5f;
+		private readonly float angleMaxLimit = 125.5f;
+		private readonly float angleMaxLimitTrianglesAround = 70.5f;
 
 		internal override void Recursive(Transform current)
 		{
@@ -23,7 +24,9 @@ namespace Assets.VRGeometry.Solutions.FoldSolutions
 			if (!current.name.Equals("Base"))
 			{
 				Transform tile = current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
-				CreateHinge(current, tile, angleMaxLimit);
+				Transform parentTile = current.parent.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
+				float angle = parentTile.name.StartsWith(Names.Square) || tile.name.StartsWith(Names.Square) ? angleMaxLimit : angleMaxLimitTrianglesAround;
+				CreateHinge(current, tile, angle);
 				tileTransforms.Add(tile);
 			}
 

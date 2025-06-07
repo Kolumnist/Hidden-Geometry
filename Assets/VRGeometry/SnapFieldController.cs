@@ -236,19 +236,19 @@ public class SnapFieldController : MonoBehaviour
 				Destroy(Down);
 			}
 
-			if (Right != null && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance + 0.1f)
+			if (Right != null && Vector3.Distance(baseTransform.position, Right.transform.position) < maxDistance + 0.01f)
 			{
 				Destroy(Right);
 			}
-			else if (Left != null && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance + 0.1f)
+			else if (Left != null && Vector3.Distance(baseTransform.position, Left.transform.position) < maxDistance + 0.01f)
 			{
 				Destroy(Left);
 			}
-			else if (Up != null && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance + 0.1f)
+			else if (Up != null && Vector3.Distance(baseTransform.position, Up.transform.position) < maxDistance + 0.01f)
 			{
 				Destroy(Up);
 			}
-			else if (Down != null && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance + 0.1f)
+			else if (Down != null && Vector3.Distance(baseTransform.position, Down.transform.position) < maxDistance + 0.01f)
 			{
 				Destroy(Down);
 			}

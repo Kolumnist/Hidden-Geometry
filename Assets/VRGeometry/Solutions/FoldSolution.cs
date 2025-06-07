@@ -126,6 +126,14 @@ namespace Assets.VRGeometry.Solutions
 						anchor = new Vector3(0, 1, 0);
 						axis = new Vector3(-1, 0, 0);
 						break;
+					case Names.Up + "_Large":
+						anchor = new Vector3(0, -1, 0);
+						axis = new Vector3(1, 0, 0);
+						break;
+					case Names.Down + "_Large":
+						anchor = new Vector3(0, 1, 0);
+						axis = new Vector3(-1, 0, 0);
+						break;
 					default:
 						anchor = Vector3.zero;
 						axis = Vector3.zero;
@@ -209,10 +217,6 @@ namespace Assets.VRGeometry.Solutions
 				StartCoroutine(ResetAfterWait(tile));
 				Destroy(tile.GetComponent<HingeJoint>(), 0.75f);
 			}
-
-			entryBase.SetActive(true);
-			isCorrect = true;
-			tileTransforms.Clear();
 		}
 
 		private IEnumerator ResetAfterWait(Transform tile)
@@ -221,6 +225,9 @@ namespace Assets.VRGeometry.Solutions
 			tile.GetComponent<Rigidbody>().useGravity = false;
 			tile.GetComponent<Rigidbody>().isKinematic = true;
 			tile.GetComponent<Collider>().isTrigger = false;
+			entryBase.SetActive(true);
+			isCorrect = true;
+			tileTransforms.Clear();
 		}
 	}
 }

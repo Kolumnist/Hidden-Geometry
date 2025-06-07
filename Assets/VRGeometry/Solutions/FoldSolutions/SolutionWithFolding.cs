@@ -144,6 +144,14 @@ public class SolutionWithFolding : MonoBehaviour
 					anchor = new Vector3(0, 1, 0);
 					axis = new Vector3(-1, 0, 0);
 					break;
+				case Names.Up + "_Large":
+					anchor = new Vector3(0, -1, 0);
+					axis = new Vector3(1, 0, 0);
+					break;
+				case Names.Down + "_Large":
+					anchor = new Vector3(0, 1, 0);
+					axis = new Vector3(-1, 0, 0);
+					break;
 				default:
 					anchor = Vector3.zero;
 					axis = Vector3.zero;
