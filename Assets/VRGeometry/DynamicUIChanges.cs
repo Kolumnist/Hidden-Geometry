@@ -29,7 +29,11 @@ public class DynamicUIChanges : MonoBehaviour
         oldestDropDownValue = dropDown.value;
         interactableObjects[oldestDropDownValue].SetActive(true);
 		foldSolution = interactableObjects[oldestDropDownValue].GetComponent<FoldSolution>();
-        sliderLabel.text = "100";
+
+        if (slider != null)
+        {
+            sliderLabel.text = "100";
+        }
     }
 
 	private void Update()
@@ -38,8 +42,11 @@ public class DynamicUIChanges : MonoBehaviour
         {
             ChangeActiveObject();
         }
-		foldSolution.motorspeed = (int)slider.value;
-		sliderLabel.text = slider.value.ToString();
+        if(slider != null)
+        {
+			foldSolution.motorspeed = (int)slider.value;
+			sliderLabel.text = slider.value.ToString();
+		}
 	}
 
     public void StartOrResetFold()
@@ -56,6 +63,9 @@ public class DynamicUIChanges : MonoBehaviour
 
 	public void ChangeActiveObject()
     {
+        foldSolution.ResetFolding();
+        toggle.isOn = false;
+
 		interactableObjects[oldestDropDownValue].SetActive(false);
 		oldestDropDownValue = dropDown.value;
         interactableObjects[oldestDropDownValue].SetActive(true);
