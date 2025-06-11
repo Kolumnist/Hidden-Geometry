@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace Assets.VRGeometry.Solutions.FoldingSolution
 {
@@ -7,35 +6,19 @@ namespace Assets.VRGeometry.Solutions.FoldingSolution
 	{
 		private readonly float angleMaxLimit = 90;
 
-		internal override void Recursive(Transform current)
+		internal override void CheckRequirements(Transform snapzone, Transform tile)
 		{
-			if (current.GetComponent<XRSocketInteractor>().interactablesSelected.Count == 0 || !isCorrect)
-			{
-				return;
-			}
-
-			if (!current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.name.StartsWith(Names.Square))
+			if (!tile.name.StartsWith(Names.Square) ||
+				tileTransforms.Count > 5)
 			{
 				isCorrect = false;
 				return;
 			}
 
-			if (!current.name.Equals("Base"))
+			if (!snapzone.name.Equals("Base"))
 			{
-				Transform tile = current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
-				CreateHinge(current, tile, angleMaxLimit);
+				CreateHinge(snapzone, tile, angleMaxLimit);
 				tileTransforms.Add(tile);
-			}
-
-			if (tileTransforms.Count > 5)
-			{
-				isCorrect = false;
-				return;
-			}
-
-			foreach (Transform child in current)
-			{
-				Recursive(child);
 			}
 		}
 	}

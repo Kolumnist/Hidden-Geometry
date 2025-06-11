@@ -16,22 +16,21 @@ namespace Assets.VRGeometry.Solutions
 		internal readonly List<Transform> tileTransforms = new List<Transform>();
 		internal bool isCorrect = true;
 
-		internal virtual void Recursive(Transform current) { }
-
 		public void StartFolding()
 		{
 			Recursive(entryBase.transform);
-			entryBase.SetActive(false);
-
-			foreach (Transform tile in tileTransforms)
-			{
-				tile.GetComponent<Rigidbody>().useGravity = true;
-				tile.GetComponent<Rigidbody>().isKinematic = false;
-				tile.GetComponent<Collider>().isTrigger = true;
-			}
-
+			
 			if (isCorrect)
 			{
+				entryBase.SetActive(false);
+
+				foreach (Transform tile in tileTransforms)
+				{
+					tile.GetComponent<Rigidbody>().useGravity = true;
+					tile.GetComponent<Rigidbody>().isKinematic = false;
+					tile.GetComponent<Collider>().isTrigger = true;
+				}
+				// You could move above code into FinalCheck.
 				StartCoroutine(FinalCheckAfterWaitForFold());
 			}
 			else
@@ -40,6 +39,24 @@ namespace Assets.VRGeometry.Solutions
 				ResetFolding();
 			}
 		}
+
+		private void Recursive(Transform current)
+		{
+			if (current.GetComponent<XRSocketInteractor>().interactablesSelected.Count == 0 || !isCorrect)
+			{
+				return;
+			}
+
+			Transform tile = current.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
+			CheckRequirements(current, tile);
+
+			foreach (Transform child in current)
+			{
+				Recursive(child);
+			}
+		}
+
+		internal virtual void CheckRequirements(Transform snapzone, Transform tile) { }
 
 		internal void CreateHinge(Transform snapzone, Transform tile, float angleMaxLimit)
 		{
@@ -214,20 +231,24 @@ namespace Assets.VRGeometry.Solutions
 			foreach (Transform tile in tileTransforms)
 			{
 				tile.GetComponent<HingeJoint>().limits = new JointLimits { min = 0, max = 0 };
-				StartCoroutine(ResetAfterWait(tile));
+				StartCoroutine(ResetTileAfterWait(tile));
 				Destroy(tile.GetComponent<HingeJoint>(), 0.75f);
 			}
+			entryBase.SetActive(true);
+			isCorrect = true;
+			tileTransforms.Clear();
+
+			AdditionalReset();
 		}
 
-		private IEnumerator ResetAfterWait(Transform tile)
+		private IEnumerator ResetTileAfterWait(Transform tile)
 		{
 			yield return new WaitForSeconds(0.25f);
 			tile.GetComponent<Rigidbody>().useGravity = false;
 			tile.GetComponent<Rigidbody>().isKinematic = true;
 			tile.GetComponent<Collider>().isTrigger = false;
-			entryBase.SetActive(true);
-			isCorrect = true;
-			tileTransforms.Clear();
 		}
+
+		internal virtual void AdditionalReset() { }
 	}
 }
