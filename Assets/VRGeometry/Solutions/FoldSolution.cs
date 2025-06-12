@@ -12,14 +12,14 @@ namespace Assets.VRGeometry.Solutions
 
 		public GameObject entryBase;
 		public int motorspeed = 100;
-		
+
 		internal readonly List<Transform> tileTransforms = new List<Transform>();
 		internal bool isCorrect = true;
 
 		public void StartFolding()
 		{
 			Recursive(entryBase.transform);
-			
+
 			if (isCorrect)
 			{
 				entryBase.SetActive(false);
@@ -69,10 +69,10 @@ namespace Assets.VRGeometry.Solutions
 			hingeJoint.anchor = anchor;
 			hingeJoint.axis = axis;
 
-			hingeJoint.motor = new JointMotor { targetVelocity = motorspeed/3, force = motorspeed };
+			hingeJoint.motor = new JointMotor { targetVelocity = motorspeed / 3, force = motorspeed };
 			hingeJoint.useMotor = true;
-			
-			hingeJoint.limits = new JointLimits { min = 0, max = angleMaxLimit};
+
+			hingeJoint.limits = new JointLimits { min = 0, max = angleMaxLimit };
 			hingeJoint.useLimits = true;
 		}
 
@@ -163,25 +163,20 @@ namespace Assets.VRGeometry.Solutions
 		private IEnumerator FinalCheckAfterWaitForFold()
 		{
 			yield return new WaitForSecondsRealtime(3.5f);
-			
-			List<Vector3> foldedPositions = new List<Vector3>();
-			foreach(Transform tile in tileTransforms)
+
+			foreach (Transform transform in tileTransforms)
 			{
-				foreach(Vector3 position in foldedPositions)
+				foreach (Transform edges in transform)
 				{
-					if (Vector3.Distance(tile.position, position) < 0.1)
+					EdgeCorrectTrigger ect = edges.GetComponent<EdgeCorrectTrigger>();
+					if (ect != null && (!ect.isConnected || ect.overlaps > 0))
 					{
 						isCorrect = false;
 						break;
 					}
 				}
-				if (!isCorrect)
-				{
-					break;
-				}
-				foldedPositions.Add(tile.position);
 			}
-			Debug.Log(isCorrect);
+
 			if (isCorrect)
 			{
 				correctParticle.Play();
@@ -224,6 +219,30 @@ namespace Assets.VRGeometry.Solutions
 				lineRenderer.SetPosition(i * 2, interactable.transform.position - new Vector3(0, 0, -0.15f));
 				lineRenderer.SetPosition(i * 2 + 1, interactable.transform.position + interactable.transform.TransformDirection(vectors[i]).normalized);
 			}*/
+
+			/*
+			List<Vector3> foldedPositions = new List<Vector3>();
+			foreach(Transform tile in tileTransforms)
+			{
+				foreach(Vector3 position in foldedPositions)
+				{
+					if (Vector3.Distance(tile.position, position) < 0.1)
+					{
+						isCorrect = false;
+						break;
+					}
+				}
+				if (!isCorrect)
+				{
+					break;
+				}
+				foldedPositions.Add(tile.position);
+			}
+			Debug.Log(isCorrect);
+			if (isCorrect)
+			{
+				correctParticle.Play();
+			}*/
 		}
 
 		public void ResetFolding()
@@ -232,9 +251,8 @@ namespace Assets.VRGeometry.Solutions
 			{
 				tile.GetComponent<HingeJoint>().limits = new JointLimits { min = 0, max = 0 };
 				StartCoroutine(ResetTileAfterWait(tile));
-				Destroy(tile.GetComponent<HingeJoint>(), 0.75f);
+				Destroy(tile.GetComponent<HingeJoint>(), 0.35f);
 			}
-			entryBase.SetActive(true);
 			isCorrect = true;
 			tileTransforms.Clear();
 
@@ -247,6 +265,7 @@ namespace Assets.VRGeometry.Solutions
 			tile.GetComponent<Rigidbody>().useGravity = false;
 			tile.GetComponent<Rigidbody>().isKinematic = true;
 			tile.GetComponent<Collider>().isTrigger = false;
+			entryBase.SetActive(true);
 		}
 
 		internal virtual void AdditionalReset() { }
