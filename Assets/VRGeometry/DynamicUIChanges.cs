@@ -15,12 +15,19 @@ public class DynamicUIChanges : MonoBehaviour
     Toggle toggle;
 
     [SerializeField]
-    Slider slider;
+    Slider motorSpeedSlider;
 
     [SerializeField]
-    TMP_Text sliderLabel;
+    TMP_Text motorSpeedSliderLabel;
 
-    private FoldSolution foldSolution;
+	[SerializeField]
+	Slider freeBuilderAngleSlider;
+
+	[SerializeField]
+	TMP_Text freeBuilderAngleSliderLabel;
+
+
+	private FoldSolution foldSolution;
     
     private int oldestDropDownValue;
 
@@ -30,10 +37,14 @@ public class DynamicUIChanges : MonoBehaviour
         interactableObjects[oldestDropDownValue].SetActive(true);
 		foldSolution = interactableObjects[oldestDropDownValue].GetComponent<FoldSolution>();
 
-        if (slider != null)
+        if (motorSpeedSlider != null)
         {
-            sliderLabel.text = "100";
-        }
+			motorSpeedSliderLabel.text = "100";
+		}
+        if (freeBuilderAngleSlider != null)
+        {
+			freeBuilderAngleSliderLabel.text = "90";
+		}
     }
 
 	private void Update()
@@ -42,10 +53,16 @@ public class DynamicUIChanges : MonoBehaviour
         {
             ChangeActiveObject();
         }
-        if(slider != null)
+
+        if(freeBuilderAngleSlider != null)
         {
-			foldSolution.motorspeed = (int)slider.value;
-			sliderLabel.text = slider.value.ToString();
+			foldSolution.freeBuildAngle = freeBuilderAngleSlider.value;
+			freeBuilderAngleSliderLabel.text = freeBuilderAngleSlider.value.ToString();
+		}
+		if (motorSpeedSlider != null)
+		{
+			foldSolution.motorspeed = (int)motorSpeedSlider.value;
+			motorSpeedSliderLabel.text = motorSpeedSlider.value.ToString();
 		}
 	}
 

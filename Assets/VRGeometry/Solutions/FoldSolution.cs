@@ -12,6 +12,7 @@ namespace Assets.VRGeometry.Solutions
 
 		public GameObject entryBase;
 		public int motorspeed = 100;
+		public float freeBuildAngle = 90;
 
 		internal readonly List<Transform> tileTransforms = new List<Transform>();
 		internal bool isCorrect = true;
@@ -22,6 +23,7 @@ namespace Assets.VRGeometry.Solutions
 
 			if (isCorrect)
 			{
+				Transform entryTile = entryBase.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
 				entryBase.SetActive(false);
 
 				foreach (Transform tile in tileTransforms)
@@ -30,6 +32,7 @@ namespace Assets.VRGeometry.Solutions
 					tile.GetComponent<Rigidbody>().isKinematic = false;
 					tile.GetComponent<Collider>().isTrigger = true;
 				}
+				tileTransforms.Add(entryTile);
 				// You could move above code into FinalCheck.
 				StartCoroutine(FinalCheckAfterWaitForFold());
 			}
@@ -56,7 +59,14 @@ namespace Assets.VRGeometry.Solutions
 			}
 		}
 
-		internal virtual void CheckRequirements(Transform snapzone, Transform tile) { }
+		internal virtual void CheckRequirements(Transform snapzone, Transform tile) 
+		{
+			if (!snapzone.name.Equals("Base"))
+			{
+				CreateHinge(snapzone, tile, freeBuildAngle);
+				tileTransforms.Add(tile);
+			}
+		}
 
 		internal void CreateHinge(Transform snapzone, Transform tile, float angleMaxLimit)
 		{
@@ -69,13 +79,14 @@ namespace Assets.VRGeometry.Solutions
 			hingeJoint.anchor = anchor;
 			hingeJoint.axis = axis;
 
-			hingeJoint.motor = new JointMotor { targetVelocity = motorspeed / 3, force = motorspeed };
+			hingeJoint.motor = new JointMotor { targetVelocity = motorspeed / 2, force = motorspeed };
 			hingeJoint.useMotor = true;
 
 			hingeJoint.limits = new JointLimits { min = 0, max = angleMaxLimit };
 			hingeJoint.useLimits = true;
 		}
 
+		// This Method is a nightmare
 		internal (Vector3, Vector3) GetAnchorAxisTuple(Transform snapzone, Transform tile)
 		{
 			Vector3 anchor;
@@ -117,6 +128,11 @@ namespace Assets.VRGeometry.Solutions
 							anchor = new Vector3(0, -1, 0);
 							axis = new Vector3(1, 0, 0);
 						}
+						else if(tile.name.StartsWith(Names.Quad))
+						{
+							anchor = new Vector3(-1.5f, 0, 0);
+							axis = new Vector3(0, -1, 0);
+						}
 						else
 						{
 							anchor = new Vector3(-1, 0, 0);
@@ -128,6 +144,11 @@ namespace Assets.VRGeometry.Solutions
 						{
 							anchor = new Vector3(0, -1, 0);
 							axis = new Vector3(1, 0, 0);
+						}
+						else if (tile.name.StartsWith(Names.Quad))
+						{
+							anchor = new Vector3(1.5f, 0, 0);
+							axis = new Vector3(0, 1, 0);
 						}
 						else
 						{
@@ -249,9 +270,12 @@ namespace Assets.VRGeometry.Solutions
 		{
 			foreach (Transform tile in tileTransforms)
 			{
-				tile.GetComponent<HingeJoint>().limits = new JointLimits { min = 0, max = 0 };
-				StartCoroutine(ResetTileAfterWait(tile));
-				Destroy(tile.GetComponent<HingeJoint>(), 0.35f);
+				if(tile.GetComponent<HingeJoint>() != null)
+				{
+					tile.GetComponent<HingeJoint>().limits = new JointLimits { min = 0, max = 0 };
+					StartCoroutine(ResetTileAfterWait(tile));
+					Destroy(tile.GetComponent<HingeJoint>(), 0.35f);
+				}
 			}
 			isCorrect = true;
 			tileTransforms.Clear();
