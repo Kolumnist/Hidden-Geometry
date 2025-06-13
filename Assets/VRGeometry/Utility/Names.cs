@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Assets.VRGeometry
+﻿namespace Assets.VRGeometry
 {
 	public struct Names
 	{
@@ -14,6 +8,7 @@ namespace Assets.VRGeometry
 		public const string TriangleEqui = "TriangleEquiliteral";
 		public const string TriangleLong = "TriangleLong";
 
+		public const string Base = "Base";
 		public const string Right = "Right";
 		public const string Left = "Left";
 		public const string Up = "Up";

@@ -9,38 +9,32 @@ namespace Assets.VRGeometry.Solutions
 	{
 		[SerializeField]
 		ParticleSystem correctParticle;
+		[SerializeField]
+		private GameObject entryBase;
 
-		public GameObject entryBase;
 		public int motorspeed = 100;
 		public float freeBuildAngle = 90;
-
+		
 		internal readonly List<Transform> tileTransforms = new List<Transform>();
+		
 		internal bool isCorrect = true;
 
 		public void StartFolding()
 		{
 			Recursive(entryBase.transform);
 
-			if (isCorrect)
+			entryBase.SetActive(false);
+			// XRSocketInteractor locks the RigidBody... I have to do it like this
+			foreach (Transform tile in tileTransforms)
 			{
-				Transform entryTile = entryBase.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
-				entryBase.SetActive(false);
+				tile.GetComponent<Rigidbody>().useGravity = true;
+				tile.GetComponent<Rigidbody>().isKinematic = false;
+				tile.GetComponent<Collider>().isTrigger = true;
+			}
 
-				foreach (Transform tile in tileTransforms)
-				{
-					tile.GetComponent<Rigidbody>().useGravity = true;
-					tile.GetComponent<Rigidbody>().isKinematic = false;
-					tile.GetComponent<Collider>().isTrigger = true;
-				}
-				tileTransforms.Add(entryTile);
-				// You could move above code into FinalCheck.
-				StartCoroutine(FinalCheckAfterWaitForFold());
-			}
-			else
-			{
-				Debug.Log(isCorrect);
-				ResetFolding();
-			}
+			tileTransforms.Add(entryBase.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform);
+
+			StartCoroutine(FinalCheckAfterWaitForFold());
 		}
 
 		private void Recursive(Transform current)
@@ -59,9 +53,15 @@ namespace Assets.VRGeometry.Solutions
 			}
 		}
 
+		/***
+		 * There are specific requirements for each object that need to be adressed and are not general.
+		 * They basically set the isCorrect false if they are not met.
+		 * 
+		 * Also important "Base" will not have a hinge.
+		 */
 		internal virtual void CheckRequirements(Transform snapzone, Transform tile) 
 		{
-			if (!snapzone.name.Equals("Base"))
+			if (!snapzone.name.Equals(Names.Base))
 			{
 				CreateHinge(snapzone, tile, freeBuildAngle);
 				tileTransforms.Add(tile);
@@ -94,29 +94,8 @@ namespace Assets.VRGeometry.Solutions
 
 			if (tile.name.StartsWith(Names.TriangleEqui))
 			{
-				switch (snapzone.name)
-				{
-					case Names.Right:
-						anchor = new Vector3(0, -1, 0);
-						axis = new Vector3(1, 0, 0);
-						break;
-					case Names.Left:
-						anchor = new Vector3(0, -1, 0);
-						axis = new Vector3(1, 0, 0);
-						break;
-					case Names.Up:
-						anchor = new Vector3(0, -1, 0);
-						axis = new Vector3(1, 0, 0);
-						break;
-					case Names.Down:
-						anchor = new Vector3(0, -1, 0);
-						axis = new Vector3(1, 0, 0);
-						break;
-					default:
-						anchor = Vector3.zero;
-						axis = Vector3.zero;
-						break;
-				}
+				anchor = new Vector3(0, -1, 0);
+				axis = new Vector3(1, 0, 0);
 			}
 			else
 			{
@@ -183,6 +162,7 @@ namespace Assets.VRGeometry.Solutions
 
 		private IEnumerator FinalCheckAfterWaitForFold()
 		{
+			// Change Wait to some kinda trigger
 			yield return new WaitForSecondsRealtime(3.5f);
 
 			foreach (Transform transform in tileTransforms)
@@ -277,6 +257,7 @@ namespace Assets.VRGeometry.Solutions
 					Destroy(tile.GetComponent<HingeJoint>(), 0.35f);
 				}
 			}
+			StartCoroutine(SetBaseActiveAfterWait());
 			isCorrect = true;
 			tileTransforms.Clear();
 
@@ -289,6 +270,11 @@ namespace Assets.VRGeometry.Solutions
 			tile.GetComponent<Rigidbody>().useGravity = false;
 			tile.GetComponent<Rigidbody>().isKinematic = true;
 			tile.GetComponent<Collider>().isTrigger = false;
+		}
+
+		private IEnumerator SetBaseActiveAfterWait()
+		{
+			yield return new WaitForSeconds(0.35f); 
 			entryBase.SetActive(true);
 		}
 

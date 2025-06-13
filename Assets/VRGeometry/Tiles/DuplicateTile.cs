@@ -1,10 +1,8 @@
 using UnityEngine;
 
+// I JUST WANNA SET THE PARENT I TRIED ALL METHODS IT WONT WOOOOORK ;((((((((((((
 public class DuplicateTile : MonoBehaviour
 {
-    [SerializeField]
-    Transform parent;
-
 	public void Duplicate()
     {
         GameObject gameObject = Instantiate(this.gameObject);

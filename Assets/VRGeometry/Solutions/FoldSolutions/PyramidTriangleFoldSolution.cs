@@ -12,7 +12,6 @@ namespace Assets.VRGeometry.Solutions.FoldingSolution
 				tileTransforms.Count > 3)
 			{
 				isCorrect = false;
-				return;
 			}
 
 			if (!snapzone.name.Equals("Base"))

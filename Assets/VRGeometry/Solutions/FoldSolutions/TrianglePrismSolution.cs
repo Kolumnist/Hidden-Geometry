@@ -20,8 +20,6 @@ namespace Assets.VRGeometry.Solutions.FoldSolutions
 				squaresCount > 3)
 			{
 				isCorrect = false;
-				Debug.Log("Ye this is fcking you");
-				return;
 			}
 
 			if (!snapzone.name.Equals("Base"))

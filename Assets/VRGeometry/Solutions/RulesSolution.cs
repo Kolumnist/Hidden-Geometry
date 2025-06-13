@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
+// OLD WAY AND TECHNICALLY DEPRECATED
 public abstract class RulesSolution : MonoBehaviour
 {
 	[SerializeField]

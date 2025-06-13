@@ -39,11 +39,11 @@ public class DynamicUIChanges : MonoBehaviour
 
         if (motorSpeedSlider != null)
         {
-			motorSpeedSliderLabel.text = "100";
+			motorSpeedSliderLabel.text = motorSpeedSlider.value.ToString();
 		}
         if (freeBuilderAngleSlider != null)
         {
-			freeBuilderAngleSliderLabel.text = "90";
+			freeBuilderAngleSliderLabel.text = freeBuilderAngleSlider.value.ToString();
 		}
     }
 
