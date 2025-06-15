@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7980262076409415936}
   - component: {fileID: 2343967156119346963}
+  - component: {fileID: 1310098072752758458}
   m_Layer: 6
   m_Name: UpEdgeCollider
   m_TagString: EdgeCollider
@@ -53,6 +54,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1310098072752758458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4078947683413289163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c3ceb3ae12f2834fb91eb64c3743c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isConnected: 0
+  overlaps: -1
 --- !u!1 &4286988147061356021
 GameObject:
   m_ObjectHideFlags: 0
@@ -63,6 +78,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3169315195564343485}
   - component: {fileID: 3396505906507765673}
+  - component: {fileID: 9024497757599356927}
   m_Layer: 6
   m_Name: DownEdgeCollider
   m_TagString: EdgeCollider
@@ -106,6 +122,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9024497757599356927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4286988147061356021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c3ceb3ae12f2834fb91eb64c3743c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isConnected: 0
+  overlaps: -1
 --- !u!1 &5635624930707944300
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,6 +146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3172755670290269533}
   - component: {fileID: 1974321889311840721}
+  - component: {fileID: 5965545376205548212}
   m_Layer: 6
   m_Name: LeftEdgeCollider
   m_TagString: EdgeCollider
@@ -159,6 +190,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5965545376205548212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5635624930707944300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c3ceb3ae12f2834fb91eb64c3743c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isConnected: 0
+  overlaps: -1
 --- !u!1 &6043367295412863475
 GameObject:
   m_ObjectHideFlags: 0
@@ -169,6 +214,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1342047841967749980}
   - component: {fileID: 1185889682467743076}
+  - component: {fileID: 8892028001969815259}
   m_Layer: 6
   m_Name: RightEdgeCollider
   m_TagString: EdgeCollider
@@ -212,6 +258,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8892028001969815259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043367295412863475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c3ceb3ae12f2834fb91eb64c3743c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isConnected: 0
+  overlaps: -1
 --- !u!1001 &655546738172283572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -287,6 +347,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8b91a93fdd735e544aeb7a1867505fcb, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8b91a93fdd735e544aeb7a1867505fcb, type: 3}
+      propertyPath: m_TagString
+      value: Tile
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -571,7 +635,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c5bfa6b4f85521419da66548b6c6f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parent: {fileID: 0}
 --- !u!4 &1049973361181044063 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8b91a93fdd735e544aeb7a1867505fcb, type: 3}
