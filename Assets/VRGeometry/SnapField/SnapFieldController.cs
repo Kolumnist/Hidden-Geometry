@@ -65,7 +65,7 @@ public class SnapFieldController : MonoBehaviour
 	 */
 	private void SnappersPerTile(Transform tile, Transform parentTile)
 	{
-		Debug.Log("Creates: " + transform.name + " which holds a " + parentTile != null ? parentTile.name : "");
+		Debug.Log("Creates: " + transform.name + " which holds a " + tile != null ? tile.name : "");
 
 		if (tile.name.StartsWith(Names.Circle))
 		{
@@ -79,7 +79,7 @@ public class SnapFieldController : MonoBehaviour
 			zRotation = quad.Z_RotationSnapField;
 			otherDistanceX = quad.X_DistanceNewSnapFields;
 
-			if (parentTile.name.StartsWith(Names.TriangleEqui))
+			if (parentTile != null && parentTile.name.StartsWith(Names.TriangleEqui))
 			{
 				xDistance = quad.Triangle_X_DistanceSnapField;
 				yDistance = quad.Triangle_Y_DistanceSnapField;
@@ -139,7 +139,7 @@ public class SnapFieldController : MonoBehaviour
 			otherZRotation = triangle.Z_RotationNewSnapFields;
 
 			// Help making this better appreciated
-			bool shouldResetRotation = transform.name.Equals("Base") || parentTile.name.StartsWith(Names.TriangleEqui) == true;
+			bool shouldResetRotation = transform.name.Equals("Base") || (parentTile != null && parentTile.name.StartsWith(Names.TriangleEqui));
 			zRotation = shouldResetRotation ? triangle.Z_RotationSnapField : triangle.Triangle_Z_RotationSnapField;
 
 			Right = Instantiate(this.gameObject);

@@ -23,6 +23,7 @@ namespace Assets.VRGeometry.Solutions
 		{
 			Recursive(entryBase.transform);
 
+			Transform entryTransform = entryBase.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform;
 			entryBase.SetActive(false);
 			// XRSocketInteractor locks the RigidBody... I have to do it like this
 			foreach (Transform tile in tileTransforms)
@@ -31,8 +32,7 @@ namespace Assets.VRGeometry.Solutions
 				tile.GetComponent<Rigidbody>().isKinematic = false;
 				tile.GetComponent<Collider>().isTrigger = true;
 			}
-
-			tileTransforms.Add(entryBase.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform);
+			tileTransforms.Add(entryTransform);
 
 			StartCoroutine(FinalCheckAfterWaitForFold());
 		}
@@ -163,7 +163,7 @@ namespace Assets.VRGeometry.Solutions
 		private IEnumerator FinalCheckAfterWaitForFold()
 		{
 			// Change Wait to some kinda trigger
-			yield return new WaitForSecondsRealtime(3.5f);
+			yield return new WaitForSecondsRealtime(4f);
 
 			foreach (Transform transform in tileTransforms)
 			{
@@ -182,68 +182,6 @@ namespace Assets.VRGeometry.Solutions
 			{
 				correctParticle.Play();
 			}
-
-			/*var vectors = new List<Vector3>
-			{
-			Vector3.up,
-			Vector3.down,
-			Vector3.left,
-			Vector3.right,
-			Vector3.forward,
-			Vector3.back
-			};
-
-			lineRenderer = gameObject.AddComponent<LineRenderer>();
-			lineRenderer.startWidth = 0.03f;
-			lineRenderer.endWidth = 0.03f;
-			lineRenderer.material = new Material(Shader.Find("Unlit/Color"))
-			{
-				color = Color.yellow
-			};
-			//lineRenderer.useWorldSpace = true;
-			lineRenderer.positionCount = 12;
-
-			//This has to happen after some time like 3 seconds or smth
-			for (int i = 0; i < 6; i++)
-			{
-				//layerforeverythingandstuff
-				RaycastHit hit;
-				if (Physics.Raycast(interactable.transform.position - new Vector3(0, -0.15f, 0), interactable.transform.TransformDirection(vectors[i]), out hit, 1f))
-				{
-					Debug.Log("Did Hit: " + hit.transform.name);
-				}
-				else
-				{
-					isLegitimate = false;
-				}
-
-				lineRenderer.SetPosition(i * 2, interactable.transform.position - new Vector3(0, 0, -0.15f));
-				lineRenderer.SetPosition(i * 2 + 1, interactable.transform.position + interactable.transform.TransformDirection(vectors[i]).normalized);
-			}*/
-
-			/*
-			List<Vector3> foldedPositions = new List<Vector3>();
-			foreach(Transform tile in tileTransforms)
-			{
-				foreach(Vector3 position in foldedPositions)
-				{
-					if (Vector3.Distance(tile.position, position) < 0.1)
-					{
-						isCorrect = false;
-						break;
-					}
-				}
-				if (!isCorrect)
-				{
-					break;
-				}
-				foldedPositions.Add(tile.position);
-			}
-			Debug.Log(isCorrect);
-			if (isCorrect)
-			{
-				correctParticle.Play();
-			}*/
 		}
 
 		public void ResetFolding()

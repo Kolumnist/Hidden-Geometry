@@ -8,6 +8,9 @@ public abstract class RulesSolution : MonoBehaviour
 	[SerializeField]
 	private Transform _3DObject;
 
+	[SerializeField]
+	internal Transform baseTransform;
+
 	public Material correctMaterial;
 	public Material falseMaterial;
 

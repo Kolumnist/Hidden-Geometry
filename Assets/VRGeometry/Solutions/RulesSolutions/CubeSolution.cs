@@ -23,7 +23,7 @@ public class CubeSolution : RulesSolution
 
 	public override void StartAlgorithm()
 	{
-		DirectionsRecursive(this.transform);
+		DirectionsRecursive(baseTransform);
 
 		EndSolution(6);
 

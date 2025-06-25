@@ -9,7 +9,7 @@ public class TriangularPyramidSolution : RulesSolution
 
 	public override void StartAlgorithm()
 	{
-		DirectionsRecursive(this.transform);
+		DirectionsRecursive(baseTransform);
 		EndSolution(4);
 
 		isRightFSIR = false;

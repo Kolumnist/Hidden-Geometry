@@ -25,7 +25,7 @@ public class DeleteGunXRHands : MonoBehaviour
 		lineRenderer.SetPosition(0, origin);
 		lineRenderer.SetPosition(1, indexFingerTip.forward*30f);
 		
-		ResetLineRenderer();
+		StartCoroutine(ResetLineRenderer());
 	}
 
 	private IEnumerator ResetLineRenderer()
