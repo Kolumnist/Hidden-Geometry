@@ -26,7 +26,6 @@ public class DynamicUIChanges : MonoBehaviour
 	[SerializeField]
 	TMP_Text freeBuilderAngleSliderLabel;
 
-
 	private FoldSolution foldSolution;
     
     private int oldestDropDownValue;

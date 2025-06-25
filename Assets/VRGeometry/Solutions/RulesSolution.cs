@@ -38,17 +38,20 @@ public abstract class RulesSolution : MonoBehaviour
 	{
 		if (isCorrect && snapfields.Count == validAmount)
 		{
-			Debug.Log("YAAAAAY");
-			ChangeMaterial(true);
+			if (_3DObject.GetComponent<Renderer>() != null)
+			{
+				_3DObject.GetComponent<Renderer>().material = correctMaterial;
+			}
 		}
 		else
 		{
-			Debug.Log("Incorrect Net");
-			ChangeMaterial(false);
+			if (_3DObject.GetComponent<Renderer>() != null)
+			{
+				_3DObject.GetComponent<Renderer>().material = falseMaterial;
+			}
 
 			var selected = errorTransform == null ? null : errorTransform.GetComponent<XRSocketInteractor>().interactablesSelected[0];
-			if (selected != null) 
-				selected.transform.GetComponent<Renderer>().material = falseMaterial;
+			if (selected != null) selected.transform.GetComponent<Renderer>().material = falseMaterial;
 		}
 
 		snapfields.Clear();
@@ -59,24 +62,5 @@ public abstract class RulesSolution : MonoBehaviour
 		countDown = 0;
 		isCorrect = true;
 		errorTransform = null;
-	}
-
-	private void ChangeMaterial(bool isCorrect)
-	{
-		List<Renderer> renderers = new List<Renderer>();
-
-		foreach(Transform child in _3DObject)
-		{
-			renderers.Add(child.GetComponent<Renderer>());
-		}
-
-		foreach (Renderer renderer in renderers)
-		{
-			renderer.material = isCorrect ? correctMaterial : falseMaterial;
-		}
-		if(_3DObject.GetComponent<Renderer>() != null)
-		{
-			_3DObject.GetComponent<Renderer>().material = isCorrect ? correctMaterial : falseMaterial;
-		}
 	}
 }
