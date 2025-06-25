@@ -23,7 +23,7 @@ public class DeleteGunXRHands : MonoBehaviour
 		Vector3 direction = indexFingerTip.forward;
 		lineRenderer.positionCount = 2;
 		lineRenderer.SetPosition(0, origin);
-		lineRenderer.SetPosition(1, indexFingerTip.forward*30f);
+		lineRenderer.SetPosition(1, indexFingerTip.forward*8f);
 		
 		StartCoroutine(ResetLineRenderer());
 	}

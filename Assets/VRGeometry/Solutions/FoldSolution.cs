@@ -11,6 +11,8 @@ namespace Assets.VRGeometry.Solutions
 		ParticleSystem correctParticle;
 		[SerializeField]
 		private GameObject entryBase;
+		[SerializeField]
+		private GameObject bigFoldObject;
 
 		public int motorspeed = 100;
 		public float freeBuildAngle = 90;
@@ -181,6 +183,7 @@ namespace Assets.VRGeometry.Solutions
 			if (isCorrect)
 			{
 				correctParticle.Play();
+				bigFoldObject.SetActive(true);
 			}
 		}
 
