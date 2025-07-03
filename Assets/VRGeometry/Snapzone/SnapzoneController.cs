@@ -12,7 +12,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 * 
 * This also doesnt support anything above 4 edges currently.
 */
-public class SnapFieldController : MonoBehaviour
+public class SnapzoneController : MonoBehaviour
 {
 	private Transform baseTransform;
 
@@ -74,16 +74,16 @@ public class SnapFieldController : MonoBehaviour
 		else if (tile.name.StartsWith(Names.Quad))
 		{
 			Quad quad = new Quad();
-			xDistance = quad.X_DistanceSnapField;
-			yDistance = quad.Y_DistanceSnapField;
-			zRotation = quad.Z_RotationSnapField;
-			otherDistanceX = quad.X_DistanceNewSnapFields;
+			xDistance = quad.X_DistanceSnapzone;
+			yDistance = quad.Y_DistanceSnapzone;
+			zRotation = quad.Z_RotationSnapzone;
+			otherDistanceX = quad.X_DistanceNewSnapzones;
 
 			if (parentTile != null && parentTile.name.StartsWith(Names.TriangleEqui))
 			{
-				xDistance = quad.Triangle_X_DistanceSnapField;
-				yDistance = quad.Triangle_Y_DistanceSnapField;
-				zRotation = quad.Triangle_Z_RotationSnapField;
+				xDistance = quad.Triangle_X_DistanceSnapzone;
+				yDistance = quad.Triangle_Y_DistanceSnapzone;
+				zRotation = quad.Triangle_Z_RotationSnapzone;
 			}
 
 			Right = Instantiate(gameObject);
@@ -134,13 +134,13 @@ public class SnapFieldController : MonoBehaviour
 		else if (tile.name.StartsWith(Names.TriangleEqui))
 		{
 			TriangleEquiliteral triangle = new TriangleEquiliteral();
-			otherDistanceX = triangle.X_DistanceNewSnapFields;
-			otherAdjustmentY = triangle.Y_AdjustmentNewSnapFields;
-			otherZRotation = triangle.Z_RotationNewSnapFields;
+			otherDistanceX = triangle.X_DistanceNewSnapzones;
+			otherAdjustmentY = triangle.Y_AdjustmentNewSnapzones;
+			otherZRotation = triangle.Z_RotationNewSnapzones;
 
 			// Help making this better appreciated
 			bool shouldResetRotation = transform.name.Equals("Base") || (parentTile != null && parentTile.name.StartsWith(Names.TriangleEqui));
-			zRotation = shouldResetRotation ? triangle.Z_RotationSnapField : triangle.Triangle_Z_RotationSnapField;
+			zRotation = shouldResetRotation ? triangle.Z_RotationSnapzone : triangle.Triangle_Z_RotationSnapzone;
 
 			Right = Instantiate(this.gameObject);
 			Left = Instantiate(this.gameObject);

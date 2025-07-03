@@ -15,7 +15,7 @@ public abstract class RulesSolution : MonoBehaviour
 	public Material falseMaterial;
 
 	internal List<string> directions = new List<string>();
-	internal List<Transform> snapfields = new List<Transform>();
+	internal List<Transform> snapzones = new List<Transform>();
 	internal Transform errorTransform;
 
 	internal int countRight = 0;
@@ -39,7 +39,7 @@ public abstract class RulesSolution : MonoBehaviour
 
 	internal void EndSolution(int validAmount)
 	{
-		if (isCorrect && snapfields.Count == validAmount)
+		if (isCorrect && snapzones.Count == validAmount)
 		{
 			if (_3DObject.GetComponent<Renderer>() != null)
 			{
@@ -57,7 +57,7 @@ public abstract class RulesSolution : MonoBehaviour
 			if (selected != null) selected.transform.GetComponent<Renderer>().material = falseMaterial;
 		}
 
-		snapfields.Clear();
+		snapzones.Clear();
 		directions.Clear();
 		countRight = 0;
 		countLeft = 0;

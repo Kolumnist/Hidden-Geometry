@@ -69,7 +69,7 @@ public class CubeSolution : RulesSolution
 				ApplyRules(current, ref isDownFSIR, ref countDown);
 				break;
 			default: 
-				snapfields.Add(current);
+				snapzones.Add(current);
 				break;
 		}
 
@@ -99,7 +99,7 @@ public class CubeSolution : RulesSolution
 		// Rule 2: First in the same hierarchy horizontally and vertically are exact
 		if (count == 1)
 		{
-			snapfields.Add(current);
+			snapzones.Add(current);
 			CheckDirections(current, current.name);
 			return;
 		}
@@ -107,7 +107,7 @@ public class CubeSolution : RulesSolution
 		// Rule 3: If the "First starting in Root" repeats itself once then it is Ceiling
 		if (isFirstStartingInRoot && count == 2)
 		{
-			snapfields.Add(current);
+			snapzones.Add(current);
 
 			// >:[
 			if (!current.transform.name.Equals(current.parent.transform.name))
@@ -122,7 +122,7 @@ public class CubeSolution : RulesSolution
 		// Rule 4: If any direction repeats the first time, then it is the opposite of the "First starting in Root"
 		if (count == 2)
 		{
-			snapfields.Add(current);
+			snapzones.Add(current);
 
 			Transform firstStartingInRoot = current.parent;
 			while(!firstStartingInRoot.parent.name.Equals("Base"))
@@ -136,7 +136,7 @@ public class CubeSolution : RulesSolution
 		// Rule 5: If any direction repeats a second time, then it is the opposite of itself
 		if (count == 3)
 		{
-			snapfields.Add(current);
+			snapzones.Add(current);
 
 			// >:[
 			if (noInstantCeiling)

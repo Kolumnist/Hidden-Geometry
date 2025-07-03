@@ -48,7 +48,7 @@ public class TriangularPyramidSolution : RulesSolution
 				ApplyRules(current, ref isDownFSIR, ref countDown);
 				break;
 			default:
-				snapfields.Add(current);
+				snapzones.Add(current);
 				break;
 		}
 
@@ -76,14 +76,14 @@ public class TriangularPyramidSolution : RulesSolution
 
 		if (count == 1)
 		{
-			snapfields.Add(current);
+			snapzones.Add(current);
 			CheckDirections(current, !isDownFSIR ? current.name : OppositeDirectionOf(current.name));
 			return;
 		}
 
 		if (count == 2 && isFirstStartingInRoot)
 		{
-			snapfields.Add(current);
+			snapzones.Add(current);
 			CheckDirections(current, !isDownFSIR ? "Down" : OppositeDirectionOf(current.name));
 			return;
 		}

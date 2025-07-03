@@ -8,27 +8,27 @@ namespace Assets.MyStuffForNow.Tiles
 		float a { get; }
 		float b { get; }
 
-		string NameOfSnapfield {get; set;}
+		string NameOfSnapzone {get; set;}
 		bool IsSnapped { get; set;}
 		bool HasTriangleParent { get; set;}
 
-		// APPLIED ON THE SNAPFIELD
-		float X_DistanceSnapField { get; set; }
-		float Y_DistanceSnapField { get; set; }
-		int Z_RotationSnapField { get; set; }
+		// APPLIED ON THE Snapzone
+		float X_DistanceSnapzone { get; set; }
+		float Y_DistanceSnapzone { get; set; }
+		int Z_RotationSnapzone { get; set; }
 
-		// APPLIED ON THE SNAPFIELD
-		float Triangle_X_DistanceSnapField { get; set; }
-		float Triangle_Y_DistanceSnapField { get; set; }
-		int Triangle_Z_RotationSnapField { get; set; }
+		// APPLIED ON THE Snapzone
+		float Triangle_X_DistanceSnapzone { get; set; }
+		float Triangle_Y_DistanceSnapzone { get; set; }
+		int Triangle_Z_RotationSnapzone { get; set; }
 
 		// Vector3 localPosition
 		// Vector3 rotation;
 
-		// APPLIED TO THE NEW SNAPFIELDS
-		float X_DistanceNewSnapFields { get; set; }
-		float Y_DistanceNewSnapFields { get; }
-		float Y_AdjustmentNewSnapFields { get; set; }
-		float Z_RotationNewSnapFields { get; set; }
+		// APPLIED TO THE NEW SnapzoneS
+		float X_DistanceNewSnapzones { get; set; }
+		float Y_DistanceNewSnapzones { get; }
+		float Y_AdjustmentNewSnapzones { get; set; }
+		float Z_RotationNewSnapzones { get; set; }
 	}
 }
